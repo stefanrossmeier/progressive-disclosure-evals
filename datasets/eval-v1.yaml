@@ -1,0 +1,891 @@
+name: eval-v1
+version: 1
+description: Held-out metadata-first progressive-disclosure benchmark. Forty single-document cases cover every corpus
+  leaf; twenty multi-document cases test composition and precedence.
+cases:
+- id: EVAL-001
+  title: Migration credit approval
+  question: A qualifying Atlas-to-Zephyr migration carries marker MIG-2. Which team approves the credit and which
+    approval code applies?
+  expected_contains:
+  - VIOLET
+  - SABLE-88
+  required_documents:
+  - commercial.billing.credits.migration
+  tags:
+  - single_doc
+  - commercial
+  - billing
+  - approval
+- id: EVAL-002
+  title: Lattice-3 outage credit approval
+  question: A service outage is already classified as Lattice-3. Which team owns approval of the outage credit and
+    which approval code is used?
+  expected_contains:
+  - QUARTZ
+  - FORGE-35
+  required_documents:
+  - commercial.billing.credits.outage
+  tags:
+  - single_doc
+  - commercial
+  - billing
+  - outage
+- id: EVAL-003
+  title: High-value chargeback route
+  question: A card-network chargeback is for EUR 9,000. Which team owns the chargeback and which case code applies?
+  expected_contains:
+  - TUNDRA
+  - IVORY-84
+  required_documents:
+  - commercial.billing.disputes.chargebacks
+  tags:
+  - single_doc
+  - commercial
+  - billing
+  - dispute
+- id: EVAL-004
+  title: Large invoice dispute
+  question: A non-chargeback invoice-line dispute totals EUR 20,000. Which team owns the investigation, which case
+    code is opened, and which team/code must co-sign the resolution?
+  expected_contains:
+  - CINDER
+  - PULSE-93
+  - CYPRESS
+  - TERN-81
+  required_documents:
+  - commercial.billing.disputes.invoice-disputes
+  tags:
+  - single_doc
+  - commercial
+  - billing
+  - dispute
+- id: EVAL-005
+  title: Duplicate-billing refund exception
+  question: A verified duplicate-billing refund carries marker D-8, is EUR 10,000, is 30 days old, and is not partner-sold.
+    Which team and code apply?
+  expected_contains:
+  - PEBBLE
+  - GLASS-12
+  required_documents:
+  - commercial.billing.refunds.exceptions
+  tags:
+  - single_doc
+  - commercial
+  - billing
+  - exception
+- id: EVAL-006
+  title: Standard refund middle band
+  question: A standard refund is EUR 5,000 and no regional or special exception applies. Which team approves it
+    and which code is used?
+  expected_contains:
+  - CEDAR
+  - RAVEN-42
+  required_documents:
+  - commercial.billing.refunds.standard
+  tags:
+  - single_doc
+  - commercial
+  - billing
+  - refund
+- id: EVAL-007
+  title: Enterprise discount approval
+  question: An enterprise discount is 17 percent and no special renewal or regional condition changes the approval
+    bands. Which team and code are required?
+  expected_contains:
+  - CYPRESS
+  - MARBLE-24
+  required_documents:
+  - commercial.contracts.enterprise.approvals
+  tags:
+  - single_doc
+  - commercial
+  - contracts
+  - approval
+- id: EVAL-008
+  title: Enterprise renewal timing
+  question: An enterprise renewal carries continuity marker C-29. How many days before term end may review open,
+    and which team/workflow code owns renewal review?
+  expected_contains:
+  - 29 days
+  - MARIGOLD
+  - WREN-26
+  required_documents:
+  - commercial.contracts.enterprise.renewals
+  tags:
+  - single_doc
+  - commercial
+  - contracts
+  - renewal
+- id: EVAL-009
+  title: Partner concession approval
+  question: A partner margin concession is 15 percent and has no exception tag. Which team approves it and which
+    code is used?
+  expected_contains:
+  - VIOLET
+  - LILAC-68
+  required_documents:
+  - commercial.contracts.partner.approvals
+  tags:
+  - single_doc
+  - commercial
+  - contracts
+  - partner
+- id: EVAL-010
+  title: PINE-6 concession authority
+  question: A partner contract is tagged PINE-6 and requests a 20 percent concession. Which team and code control
+    approval?
+  expected_contains:
+  - SABLE
+  - BIRCH-72
+  required_documents:
+  - commercial.contracts.partner.exceptions
+  tags:
+  - single_doc
+  - commercial
+  - contracts
+  - exception
+- id: EVAL-011
+  title: APAC standard refund override
+  question: An APAC-governed standard refund is EUR 7,000 and no higher-authority special policy applies. Which
+    team and approval code apply?
+  expected_contains:
+  - VIOLET
+  - JADE-66
+  required_documents:
+  - governance.regions.apac.billing-overrides
+  tags:
+  - single_doc
+  - governance
+  - apac
+  - billing
+- id: EVAL-012
+  title: APAC Nova routing and export ceiling
+  question: For an APAC-governed Nova tenant, what is the Lattice-3 incident queue and what object ceiling applies
+    to export batches?
+  expected_contains:
+  - AURORA-28
+  - 1,019
+  required_documents:
+  - governance.regions.apac.data-handling
+  tags:
+  - single_doc
+  - governance
+  - apac
+  - data
+- id: EVAL-013
+  title: EU Atlas refund override
+  question: An EU-governed Atlas customer requests a standard refund of EUR 6,000. Which team approves it and which
+    code applies?
+  expected_contains:
+  - CYPRESS
+  - LUCENT-76
+  required_documents:
+  - governance.regions.eu.billing-overrides
+  tags:
+  - single_doc
+  - governance
+  - eu
+  - billing
+- id: EVAL-014
+  title: EU incident notice and queue
+  question: For an EU-governed Atlas incident, which processing statement identifier must be attached to customer
+    notices and which queue replaces the Atlas default escalation queue?
+  expected_contains:
+  - EU-PS-17
+  - KESTREL-4
+  required_documents:
+  - governance.regions.eu.data-handling
+  tags:
+  - single_doc
+  - governance
+  - eu
+  - data
+- id: EVAL-015
+  title: US high refund override
+  question: A US-governed standard refund is EUR 9,000 and no D-8 exception applies. Which team approves it and
+    which code is required?
+  expected_contains:
+  - FALCON
+  - RIDGE-91
+  required_documents:
+  - governance.regions.us.billing-overrides
+  tags:
+  - single_doc
+  - governance
+  - us
+  - billing
+- id: EVAL-016
+  title: US Atlas retention override
+  question: What explicit retention duration applies to a US-governed Atlas tenant?
+  expected_contains:
+  - 61 days
+  required_documents:
+  - governance.regions.us.data-handling
+  tags:
+  - single_doc
+  - governance
+  - us
+  - data
+- id: EVAL-017
+  title: Break-glass credential approval
+  question: Which team approves break-glass credential access, which access code is used, and how long does the
+    grant remain active?
+  expected_contains:
+  - SABLE
+  - QUILL-39
+  - 11 hours
+  required_documents:
+  - governance.security.credentials.emergency-access
+  tags:
+  - single_doc
+  - governance
+  - security
+  - credentials
+- id: EVAL-018
+  title: Zephyr credential rotation
+  question: How often do Zephyr service credentials rotate and which rotation marker identifies the schedule?
+  expected_contains:
+  - 43 days
+  - CRED-Z43
+  required_documents:
+  - governance.security.credentials.rotation
+  tags:
+  - single_doc
+  - governance
+  - security
+  - credentials
+- id: EVAL-019
+  title: Medium export package approval
+  question: An export package is 500 GiB. Which team must approve it and which approval code applies?
+  expected_contains:
+  - CYPRESS
+  - DUNE-64
+  required_documents:
+  - governance.security.exports.approval
+  tags:
+  - single_doc
+  - governance
+  - security
+  - exports
+- id: EVAL-020
+  title: Temporary export retention
+  question: A non-EU staged export package is marked EX-TEMP. How long is it retained, and which team/code are required
+    if it is deleted early?
+  expected_contains:
+  - 19 days
+  - FALCON
+  - FROST-58
+  required_documents:
+  - governance.security.exports.retention
+  tags:
+  - single_doc
+  - governance
+  - security
+  - exports
+- id: EVAL-021
+  title: Zephyr Lattice-3 customer notice
+  question: A Zephyr incident is classified Lattice-3. Within how many minutes must the first customer notice be
+    issued, and which channel code is used?
+  expected_contains:
+  - 29 minutes
+  - VELA-44
+  required_documents:
+  - operations.incidents.communication.customer-notification
+  tags:
+  - single_doc
+  - operations
+  - incidents
+  - notification
+- id: EVAL-022
+  title: Executive incident notification
+  question: A Lattice-3 incident affects 400 active tenants. Which team receives the executive notification, which
+    briefing code is used, and when is the first brief due?
+  expected_contains:
+  - CYPRESS
+  - HELIX-74
+  - 37 minutes
+  required_documents:
+  - operations.incidents.communication.executive-notification
+  tags:
+  - single_doc
+  - operations
+  - incidents
+  - notification
+- id: EVAL-023
+  title: Nova Lattice-3 paging
+  question: For a Nova Lattice-3 incident, what paging code is used for the first page and how many minutes does
+    Team LANTERN have to acknowledge?
+  expected_contains:
+  - VX-17
+  - 17 minutes
+  required_documents:
+  - operations.incidents.escalation.paging
+  tags:
+  - single_doc
+  - operations
+  - incidents
+  - paging
+- id: EVAL-024
+  title: Zephyr Lattice-3 route
+  question: For a Lattice-3 Zephyr incident with no regional queue override, which team and queue are used?
+  expected_contains:
+  - QUARTZ
+  - MICA-73
+  required_documents:
+  - operations.incidents.escalation.routing
+  tags:
+  - single_doc
+  - operations
+  - incidents
+  - routing
+- id: EVAL-025
+  title: Blast-score classification
+  question: An incident has Northstar blast score 50 and no special override applies. What Lattice level is assigned
+    and which team owns that severity?
+  expected_contains:
+  - Lattice-2
+  - CINDER
+  required_documents:
+  - operations.incidents.severity.classification
+  tags:
+  - single_doc
+  - operations
+  - incidents
+  - severity
+- id: EVAL-026
+  title: P-17 severity floor
+  question: An incident carries finance marker P-17, would ordinarily be Lattice-1, and is not an APAC-governed
+    Nova incident. What Lattice level applies?
+  expected_contains:
+  - Lattice-2
+  required_documents:
+  - operations.incidents.severity.overrides
+  tags:
+  - single_doc
+  - operations
+  - incidents
+  - severity
+  - override
+- id: EVAL-027
+  title: Atlas emergency maintenance authorization
+  question: Which team authorizes Atlas emergency maintenance and which token is required?
+  expected_contains:
+  - SABLE
+  - COMET-48
+  required_documents:
+  - operations.maintenance.emergency.authorization
+  tags:
+  - single_doc
+  - operations
+  - maintenance
+  - emergency
+- id: EVAL-028
+  title: Zephyr emergency rollback
+  question: For a Zephyr emergency rollback, which checkpoint marker is used and how soon after the rollback decision
+    must rollback begin?
+  expected_contains:
+  - GARNET-52
+  - 23 minutes
+  required_documents:
+  - operations.maintenance.emergency.rollback
+  tags:
+  - single_doc
+  - operations
+  - maintenance
+  - rollback
+- id: EVAL-029
+  title: Scheduled change approval
+  question: A scheduled change lasts 60 minutes and is not emergency work. Which team approves it and which record
+    code is required?
+  expected_contains:
+  - CEDAR
+  - HARBOR-47
+  required_documents:
+  - operations.maintenance.scheduled.approvals
+  tags:
+  - single_doc
+  - operations
+  - maintenance
+  - scheduled
+- id: EVAL-030
+  title: Nova maintenance window
+  question: What is the standard Nova maintenance window, including weekday, start time, and end time?
+  expected_contains:
+  - Tuesday
+  - 01:11 UTC
+  - 02:08 UTC
+  required_documents:
+  - operations.maintenance.scheduled.windows
+  tags:
+  - single_doc
+  - operations
+  - maintenance
+  - scheduled
+- id: EVAL-031
+  title: Crown compute quota
+  question: How many concurrent compute units per tenant does the Crown tier permit?
+  expected_contains:
+  - '719'
+  required_documents:
+  - platform.infrastructure.compute.quotas
+  tags:
+  - single_doc
+  - platform
+  - infrastructure
+  - compute
+- id: EVAL-032
+  title: Crown scheduler marker
+  question: Which scheduler marker identifies the Crown compute tier?
+  expected_contains:
+  - CROWN-73
+  required_documents:
+  - platform.infrastructure.compute.tiers
+  tags:
+  - single_doc
+  - platform
+  - infrastructure
+  - compute
+- id: EVAL-033
+  title: Opal storage ceiling
+  question: What logical object ceiling per tenant shard applies to Opal storage?
+  expected_contains:
+  - 863 GiB
+  required_documents:
+  - platform.infrastructure.storage.classes
+  tags:
+  - single_doc
+  - platform
+  - infrastructure
+  - storage
+- id: EVAL-034
+  title: Slate retention
+  question: What is the base retention duration for Slate storage?
+  expected_contains:
+  - 73 days
+  required_documents:
+  - platform.infrastructure.storage.retention
+  tags:
+  - single_doc
+  - platform
+  - infrastructure
+  - storage
+- id: EVAL-035
+  title: Atlas default classes
+  question: What service class, compute tier, and storage class does Atlas use by default?
+  expected_contains:
+  - A3
+  - Flint
+  - Slate
+  required_documents:
+  - platform.products.atlas.limits
+  tags:
+  - single_doc
+  - platform
+  - products
+  - atlas
+- id: EVAL-036
+  title: Atlas ownership
+  question: Which team owns Atlas and which token is used for routine product-change signoff?
+  expected_contains:
+  - JUNIPER
+  - APEX-57
+  required_documents:
+  - platform.products.atlas.ownership
+  tags:
+  - single_doc
+  - platform
+  - products
+  - atlas
+- id: EVAL-037
+  title: Nova default classes
+  question: What service class, compute tier, and storage class does Nova use by default?
+  expected_contains:
+  - N2
+  - Reed
+  - Opal
+  required_documents:
+  - platform.products.nova.limits
+  tags:
+  - single_doc
+  - platform
+  - products
+  - nova
+- id: EVAL-038
+  title: Nova ownership
+  question: Which team owns Nova and which token is used for routine product-change signoff?
+  expected_contains:
+  - LANTERN
+  - SOLAR-92
+  required_documents:
+  - platform.products.nova.ownership
+  tags:
+  - single_doc
+  - platform
+  - products
+  - nova
+- id: EVAL-039
+  title: Zephyr default classes
+  question: What service class, compute tier, and storage class does Zephyr use by default?
+  expected_contains:
+  - Z5
+  - Crown
+  - Amber
+  required_documents:
+  - platform.products.zephyr.limits
+  tags:
+  - single_doc
+  - platform
+  - products
+  - zephyr
+- id: EVAL-040
+  title: Zephyr ownership
+  question: Which team owns Zephyr and which token is used for routine product-change signoff?
+  expected_contains:
+  - QUARTZ
+  - FERN-82
+  required_documents:
+  - platform.products.zephyr.ownership
+  tags:
+  - single_doc
+  - platform
+  - products
+  - zephyr
+- id: EVAL-041
+  title: EU Atlas effective retention
+  question: For an EU-governed Atlas tenant, which storage class applies and what effective base retention duration
+    follows from that class?
+  expected_contains:
+  - Opal
+  - 29 days
+  required_documents:
+  - platform.products.atlas.limits
+  - governance.regions.eu.data-handling
+  - platform.infrastructure.storage.retention
+  tags:
+  - multi_doc
+  - composition
+  - eu
+  - platform
+  - storage
+- id: EVAL-042
+  title: US Nova effective compute ceiling
+  question: For a US-governed Nova tenant, what compute tier remains assigned and what concurrent compute ceiling
+    actually applies?
+  expected_contains:
+  - Reed
+  - '113'
+  required_documents:
+  - platform.products.nova.limits
+  - platform.infrastructure.compute.quotas
+  - governance.regions.us.data-handling
+  tags:
+  - multi_doc
+  - composition
+  - us
+  - platform
+  - compute
+- id: EVAL-043
+  title: EU Zephyr effective compute ceiling
+  question: For an EU-governed Zephyr tenant, what compute tier remains assigned and what concurrent compute ceiling
+    actually applies?
+  expected_contains:
+  - Crown
+  - '613'
+  required_documents:
+  - platform.products.zephyr.limits
+  - platform.infrastructure.compute.quotas
+  - governance.regions.eu.data-handling
+  tags:
+  - multi_doc
+  - composition
+  - eu
+  - platform
+  - compute
+- id: EVAL-044
+  title: APAC Atlas effective compute ceiling
+  question: For an APAC-governed Atlas tenant, what compute tier remains assigned and what concurrent compute ceiling
+    actually applies?
+  expected_contains:
+  - Flint
+  - '283'
+  required_documents:
+  - platform.products.atlas.limits
+  - platform.infrastructure.compute.quotas
+  - governance.regions.apac.data-handling
+  tags:
+  - multi_doc
+  - composition
+  - apac
+  - platform
+  - compute
+- id: EVAL-045
+  title: APAC Zephyr effective retention
+  question: For an APAC-governed Zephyr tenant, which storage class applies and what base retention duration follows
+    from that class?
+  expected_contains:
+  - Slate
+  - 73 days
+  required_documents:
+  - platform.products.zephyr.limits
+  - governance.regions.apac.data-handling
+  - platform.infrastructure.storage.retention
+  tags:
+  - multi_doc
+  - composition
+  - apac
+  - platform
+  - storage
+- id: EVAL-046
+  title: EU MIG-2 precedence
+  question: An EU-governed Atlas-to-Zephyr migration qualifies for marker MIG-2. Which team and approval code govern
+    the migration credit despite the regional billing rules?
+  expected_contains:
+  - VIOLET
+  - SABLE-88
+  required_documents:
+  - commercial.billing.credits.migration
+  - governance.regions.eu.billing-overrides
+  tags:
+  - multi_doc
+  - precedence
+  - eu
+  - commercial
+  - migration
+- id: EVAL-047
+  title: US in-limit D-8 precedence
+  question: A US-governed verified duplicate-billing refund is tagged D-8, is EUR 10,000, is 30 days old, and is
+    not partner-sold. Which team and code govern approval?
+  expected_contains:
+  - PEBBLE
+  - GLASS-12
+  required_documents:
+  - commercial.billing.refunds.exceptions
+  - governance.regions.us.billing-overrides
+  tags:
+  - multi_doc
+  - precedence
+  - us
+  - commercial
+  - refund
+- id: EVAL-048
+  title: US over-limit D-8 fallback
+  question: A US-governed verified duplicate-billing refund is tagged D-8 but is EUR 12,000 and therefore exceeds
+    the D-8 exception ceiling. Which team and code govern approval after fallback?
+  expected_contains:
+  - FALCON
+  - RIDGE-91
+  required_documents:
+  - commercial.billing.refunds.exceptions
+  - governance.regions.us.billing-overrides
+  tags:
+  - multi_doc
+  - precedence
+  - us
+  - commercial
+  - refund
+- id: EVAL-049
+  title: APAC Nova PINE-6 duplicate refund
+  question: An APAC-governed Nova customer bought through a PINE-6 partner and has a verified duplicate-billing
+    refund of EUR 9,000. Which team/code control approval, and which payment-instrument code applies?
+  expected_contains:
+  - SABLE
+  - BIRCH-72
+  - AC-73
+  required_documents:
+  - commercial.contracts.partner.exceptions
+  - governance.regions.apac.billing-overrides
+  tags:
+  - multi_doc
+  - precedence
+  - apac
+  - commercial
+  - partner
+- id: EVAL-050
+  title: EU Atlas Lattice-3 outage credit
+  question: An EU-governed Atlas outage is already classified Lattice-3. Which team/code approve the credit, and
+    what regional credit cap applies?
+  expected_contains:
+  - QUARTZ
+  - FORGE-35
+  - 5,275
+  required_documents:
+  - commercial.billing.credits.outage
+  - governance.regions.eu.billing-overrides
+  tags:
+  - multi_doc
+  - composition
+  - eu
+  - commercial
+  - outage
+- id: EVAL-051
+  title: Forced Atlas Lattice-3 routing
+  question: An Atlas control-plane write-availability reading is confirmed at 90 percent and no regional queue override
+    applies. What Lattice level, owning team, and escalation queue apply?
+  expected_contains:
+  - Lattice-3
+  - JUNIPER
+  - ORBIT-9
+  required_documents:
+  - operations.incidents.severity.classification
+  - operations.incidents.escalation.routing
+  tags:
+  - multi_doc
+  - composition
+  - operations
+  - incident
+  - routing
+- id: EVAL-052
+  title: EU Atlas forced Lattice-3 routing
+  question: An EU-governed Atlas control-plane write-availability reading is confirmed at 90 percent. What Lattice
+    level, owning team, and escalation queue apply?
+  expected_contains:
+  - Lattice-3
+  - JUNIPER
+  - KESTREL-4
+  required_documents:
+  - operations.incidents.severity.classification
+  - operations.incidents.escalation.routing
+  - governance.regions.eu.data-handling
+  tags:
+  - multi_doc
+  - precedence
+  - eu
+  - operations
+  - incident
+- id: EVAL-053
+  title: APAC Nova P-17 classification
+  question: An APAC-governed Nova incident has blast score 20 and finance marker P-17. What final Lattice level
+    applies?
+  expected_contains:
+  - Lattice-1
+  required_documents:
+  - operations.incidents.severity.classification
+  - operations.incidents.severity.overrides
+  - governance.regions.apac.data-handling
+  tags:
+  - multi_doc
+  - precedence
+  - apac
+  - operations
+  - severity
+- id: EVAL-054
+  title: Nova Lattice-3 route and page
+  question: A Nova incident is already classified Lattice-3 with no regional override. Which owning team and queue
+    are used, which first-page code is sent, and how long does the owner have to acknowledge?
+  expected_contains:
+  - LANTERN
+  - KITE-204
+  - VX-17
+  - 17 minutes
+  required_documents:
+  - operations.incidents.escalation.routing
+  - operations.incidents.escalation.paging
+  tags:
+  - multi_doc
+  - composition
+  - operations
+  - incident
+  - paging
+- id: EVAL-055
+  title: Atlas maintenance with break-glass
+  question: Atlas emergency maintenance also requires break-glass credential access. Which maintenance token and
+    credential-access code are required, and which team approves the break-glass grant?
+  expected_contains:
+  - COMET-48
+  - QUILL-39
+  - SABLE
+  required_documents:
+  - operations.maintenance.emergency.authorization
+  - governance.security.credentials.emergency-access
+  tags:
+  - multi_doc
+  - composition
+  - operations
+  - security
+  - emergency
+- id: EVAL-056
+  title: Atlas emergency rollback package
+  question: Atlas emergency maintenance requires a rollback. Which emergency-maintenance token is required, which
+    Atlas rollback marker is used, and how soon must rollback begin after the decision?
+  expected_contains:
+  - COMET-48
+  - LYNX-14
+  - 23 minutes
+  required_documents:
+  - operations.maintenance.emergency.authorization
+  - operations.maintenance.emergency.rollback
+  tags:
+  - multi_doc
+  - composition
+  - operations
+  - maintenance
+  - rollback
+- id: EVAL-057
+  title: Zephyr scheduled window and approval
+  question: A Zephyr scheduled change starts Thursday at 04:30 UTC, ends at 05:20 UTC, and lasts 50 minutes. What
+    is the standard window and which team/code approve this duration?
+  expected_contains:
+  - 04:23 UTC
+  - 05:36 UTC
+  - CEDAR
+  - HARBOR-47
+  required_documents:
+  - operations.maintenance.scheduled.windows
+  - operations.maintenance.scheduled.approvals
+  tags:
+  - multi_doc
+  - composition
+  - operations
+  - maintenance
+  - scheduled
+- id: EVAL-058
+  title: US Zephyr export constraints
+  question: A US-governed Zephyr export package is 500 GiB and contains 2,300 objects. Which team/code correspond
+    to the package-size approval band, and what regional object ceiling must the export satisfy?
+  expected_contains:
+  - CYPRESS
+  - DUNE-64
+  - 2,219
+  required_documents:
+  - governance.security.exports.approval
+  - platform.products.zephyr.limits
+  - governance.regions.us.data-handling
+  tags:
+  - multi_doc
+  - composition
+  - us
+  - security
+  - exports
+- id: EVAL-059
+  title: EU EX-TEMP retention precedence
+  question: A staged export package is marked EX-TEMP and is governed by the EU region. What retention duration
+    ultimately applies?
+  expected_contains:
+  - 17 days
+  required_documents:
+  - governance.security.exports.retention
+  - governance.regions.eu.data-handling
+  tags:
+  - multi_doc
+  - precedence
+  - eu
+  - security
+  - exports
+- id: EVAL-060
+  title: C-29 renewal with discount approval
+  question: An enterprise renewal carries continuity marker C-29 and includes a 17 percent discount. How many days
+    before term end may review open, and which team/code approve the discount?
+  expected_contains:
+  - 29 days
+  - CYPRESS
+  - MARBLE-24
+  required_documents:
+  - commercial.contracts.enterprise.renewals
+  - commercial.contracts.enterprise.approvals
+  tags:
+  - multi_doc
+  - composition
+  - commercial
+  - contracts
+  - renewal

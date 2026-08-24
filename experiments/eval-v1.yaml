@@ -1,0 +1,8 @@
+name: eval-v1-v14-validation
+dataset: datasets/eval-v1.yaml
+runs_per_case: 5
+max_documents: 4
+prompts:
+  - prompts/agent/system-v14.md
+models:
+  - env:OPENAI_MODEL

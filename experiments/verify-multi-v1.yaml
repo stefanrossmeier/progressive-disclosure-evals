@@ -1,0 +1,22 @@
+# Focused multi-document verification set built from the failure classes observed
+# in the partial V10 multi run: dependency chains, precedence/fallback, regional
+# scope, citation completeness, and independent compound facts.
+name: verify-v1-v14-multi
+dataset: datasets/eval-v1.yaml
+case_tags:
+  - multi_doc
+case_ids:
+  - EVAL-041
+  - EVAL-043
+  - EVAL-047
+  - EVAL-048
+  - EVAL-052
+  - EVAL-053
+  - EVAL-057
+  - EVAL-058
+runs_per_case: 2
+max_documents: 4
+prompts:
+  - prompts/agent/system-v14.md
+models:
+  - env:OPENAI_MODEL

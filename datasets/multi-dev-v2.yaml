@@ -1,0 +1,101 @@
+name: multi-dev-v2
+version: 2
+profile: development
+description: Development set for genuine multi-document progressive disclosure. Each case is written so every declared required document contributes a distinct requested fact or transformation.
+cases:
+  - id: MDEV-001
+    title: EU Atlas storage dependency chain
+    question: For an EU-governed Atlas tenant, what service class does Atlas assign, what storage class does Atlas use by default, which class does EU handling replace it with, and what base retention duration does that replacement class resolve to?
+    expected_contains: [A3, Slate, Opal, 29 days]
+    required_documents:
+      - platform.products.atlas.limits
+      - governance.regions.eu.data-handling
+      - platform.infrastructure.storage.retention
+    tags: [multi_doc, composition, eu, platform, storage]
+
+  - id: MDEV-002
+    title: US Nova compute dependency chain
+    question: For a US-governed Nova tenant, what service class and compute tier does Nova assign, what normal concurrent quota belongs to that tier, and what lower US compute ceiling actually applies?
+    expected_contains: [N2, Reed, "137", "113"]
+    required_documents:
+      - platform.products.nova.limits
+      - platform.infrastructure.compute.quotas
+      - governance.regions.us.data-handling
+    tags: [multi_doc, composition, us, platform, compute]
+
+  - id: MDEV-003
+    title: EU Zephyr compute dependency chain
+    question: For an EU-governed Zephyr tenant, what service class and compute tier does Zephyr assign, what normal concurrent quota belongs to that tier, and what EU ceiling actually applies?
+    expected_contains: [Z5, Crown, "719", "613"]
+    required_documents:
+      - platform.products.zephyr.limits
+      - platform.infrastructure.compute.quotas
+      - governance.regions.eu.data-handling
+    tags: [multi_doc, composition, eu, platform, compute]
+
+  - id: MDEV-004
+    title: APAC Atlas compute dependency chain
+    question: For an APAC-governed Atlas tenant, what service class and compute tier does Atlas assign, what normal concurrent quota belongs to that tier, and what APAC ceiling actually applies?
+    expected_contains: [A3, Flint, "311", "283"]
+    required_documents:
+      - platform.products.atlas.limits
+      - platform.infrastructure.compute.quotas
+      - governance.regions.apac.data-handling
+    tags: [multi_doc, composition, apac, platform, compute]
+
+  - id: MDEV-005
+    title: APAC Zephyr retention dependency chain
+    question: For an APAC-governed Zephyr tenant, what service class and default storage class does Zephyr assign, which storage class does APAC handling replace it with, and what base retention follows from the replacement class?
+    expected_contains: [Z5, Amber, Slate, 73 days]
+    required_documents:
+      - platform.products.zephyr.limits
+      - governance.regions.apac.data-handling
+      - platform.infrastructure.storage.retention
+    tags: [multi_doc, composition, apac, platform, storage]
+
+  - id: MDEV-006
+    title: US D-8 fallback with both authorities
+    question: A US-governed verified duplicate-billing refund is tagged D-8 and is EUR 12,000. What is the D-8 exception ceiling and its in-scope team/code, and because this amount exceeds that ceiling, which US fallback team/code govern the actual approval?
+    expected_contains: ["11,625", PEBBLE, GLASS-12, FALCON, RIDGE-91]
+    required_documents:
+      - commercial.billing.refunds.exceptions
+      - governance.regions.us.billing-overrides
+    tags: [multi_doc, precedence, us, commercial, refund]
+
+  - id: MDEV-007
+    title: EU MIG-2 precedence with regional comparison
+    question: For an EU-governed Atlas-to-Zephyr migration marked MIG-2, what cap would the EU policy use for an ordinary Atlas outage credit, and which team/code govern the MIG-2 migration credit instead?
+    expected_contains: ["5,275", VIOLET, SABLE-88]
+    required_documents:
+      - governance.regions.eu.billing-overrides
+      - commercial.billing.credits.migration
+    tags: [multi_doc, precedence, eu, commercial, migration]
+
+  - id: MDEV-008
+    title: EU Atlas incident composition
+    question: An EU-governed Atlas control-plane write-availability reading is confirmed at 90 percent. What Lattice level and owning team apply, what default Atlas escalation queue would routing use without a regional replacement, and what EU processing-statement identifier must customer incident notices include?
+    expected_contains: [Lattice-3, JUNIPER, ORBIT-9, EU-PS-17]
+    required_documents:
+      - operations.incidents.severity.classification
+      - operations.incidents.escalation.routing
+      - governance.regions.eu.data-handling
+    tags: [multi_doc, composition, eu, operations, incident]
+
+  - id: MDEV-009
+    title: Zephyr scheduled window and duration approval
+    question: A Zephyr scheduled change lasts 50 minutes. What is Zephyr's standard maintenance window, and which team/code approve a scheduled change of that duration?
+    expected_contains: [04:23 UTC, 05:36 UTC, CEDAR, HARBOR-47]
+    required_documents:
+      - operations.maintenance.scheduled.windows
+      - operations.maintenance.scheduled.approvals
+    tags: [multi_doc, composition, operations, maintenance, scheduled]
+
+  - id: MDEV-010
+    title: US Zephyr export approval and two ceilings
+    question: A US-governed Zephyr export package is 500 GiB. Which team/code approve that package-size band, what Zephyr product object ceiling applies before regional handling, and what lower US regional object ceiling must ultimately be satisfied?
+    expected_contains: [CYPRESS, DUNE-64, "2,931", "2,219"]
+    required_documents:
+      - governance.security.exports.approval
+      - platform.products.zephyr.limits
+      - governance.regions.us.data-handling
+    tags: [multi_doc, composition, us, security, exports]

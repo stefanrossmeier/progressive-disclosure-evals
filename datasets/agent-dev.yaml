@@ -1,0 +1,39 @@
+cases:
+  - id: DEV-AGENT-001
+    question: >
+      A qualifying Atlas-to-Zephyr migration is labeled MIG-2. Which team must
+      approve the migration credit and which approval code is required?
+    expected_contains: [VIOLET, SABLE-88]
+    required_documents: [commercial.billing.credits.migration]
+
+  - id: DEV-AGENT-002
+    question: >
+      A standard subscription refund is EUR 5,000 and the case explicitly says
+      no regional billing override applies. Which team approves it and which
+      approval code is used?
+    expected_contains: [CEDAR, RAVEN-42]
+    required_documents: [commercial.billing.refunds.standard]
+
+  - id: DEV-AGENT-003
+    question: >
+      Who owns the Atlas product, and what token is used for routine
+      product-change signoff?
+    expected_contains: [JUNIPER, APEX-57]
+    required_documents: [platform.products.atlas.ownership]
+
+  - id: DEV-AGENT-004
+    question: >
+      An EU-governed Atlas customer has a standard refund of EUR 6,000. Which
+      team approves it and which code applies?
+    expected_contains: [CYPRESS, LUCENT-76]
+    required_documents: [governance.regions.eu.billing-overrides]
+
+  - id: DEV-AGENT-005
+    question: >
+      Atlas emergency maintenance also requires break-glass credential access.
+      Identify both required authorization codes/tokens and the approving team
+      for each authorization.
+    expected_contains: [SABLE, QUILL-39, COMET-48]
+    required_documents:
+      - governance.security.credentials.emergency-access
+      - operations.maintenance.emergency.authorization

@@ -1,0 +1,9 @@
+# Repeated development run for complete-plan multi-document progressive disclosure.
+name: multi-dev-v2-v14
+dataset: datasets/multi-dev-v2.yaml
+runs_per_case: 5
+max_documents: 4
+prompts:
+  - prompts/agent/system-v14.md
+models:
+  - env:OPENAI_MODEL
