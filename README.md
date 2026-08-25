@@ -170,3 +170,4 @@ The repository therefore reports both **strict end-to-end success** and **answer
 - [`docs/methodology.md`](docs/methodology.md) — evaluation design and metrics
 - [`docs/how-to-corpus-metadata.md`](docs/how-to-corpus-metadata.md) — how to design discoverable corpus metadata
 - [`docs/how-to-progressive-disclosure-runtime.md`](docs/how-to-progressive-disclosure-runtime.md) — runtime design and evidence-planning rules
+- [`docs/rag-baselines.md`](docs/rag-baselines.md) — local dense/hybrid RAG architecture, indexing, evaluation, and comparison workflow

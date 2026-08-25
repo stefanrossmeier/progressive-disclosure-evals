@@ -1,0 +1,4 @@
+name: rag-hybrid-k6-all
+configs:
+  - experiments/rag/hybrid-northstar.yaml
+  - experiments/rag/hybrid-tell-aster.yaml

@@ -1,0 +1,11 @@
+name: rag-hybrid-k6-tell-aster
+dataset: datasets/tell-aster-eval-v2.yaml
+corpus: tell-aster
+index_dir: results/rag-indexes/tell-aster
+strategy: hybrid
+top_k: 6
+max_chunks_per_document: 2
+rrf_k: 60
+runs_per_case: 1
+model: env:OPENAI_MODEL
+prompt: prompts/rag/system-v1.md

@@ -1,0 +1,4 @@
+name: rag-dense-k6-all
+configs:
+  - experiments/rag/dense-northstar.yaml
+  - experiments/rag/dense-tell-aster.yaml

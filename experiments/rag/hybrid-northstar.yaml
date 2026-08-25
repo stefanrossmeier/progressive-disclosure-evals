@@ -1,0 +1,11 @@
+name: rag-hybrid-k6-northstar
+dataset: datasets/eval-v1.yaml
+corpus: northstar
+index_dir: results/rag-indexes/northstar
+strategy: hybrid
+top_k: 6
+max_chunks_per_document: 2
+rrf_k: 60
+runs_per_case: 1
+model: env:OPENAI_MODEL
+prompt: prompts/rag/system-v1.md
