@@ -11,9 +11,9 @@ from evals.benchmark import load_eval_dataset, select_cases
 from evals.grading import answer_matches_expected
 from progressive_disclosure.knowledge import KnowledgeBase
 
-from .evaluation import RagEvalPlan
+from .evaluation import QwenRagPlan
 from .index import load_index
-from .retrieval import LocalRetriever
+from .retrieval import QwenHierarchicalRetriever
 
 
 def _p95(values: list[float]) -> float | None:
@@ -24,7 +24,7 @@ def _p95(values: list[float]) -> float | None:
 
 
 def run_retrieval_eval(
-    plan: RagEvalPlan,
+    plan: QwenRagPlan,
     *,
     output_dir: Path,
     case_ids: set[str] | None = None,
@@ -44,43 +44,33 @@ def run_retrieval_eval(
         raise ValueError("case selection is empty")
 
     index = load_index(plan.index_dir, verify_corpus=True)
-    retriever = LocalRetriever(
+    retriever = QwenHierarchicalRetriever(
         index,
+        model_root=str(plan.model_root),
         device=plan.device,
-        offline=plan.offline,
-        reranker_model=plan.reranker_model,
+        document_candidates=plan.document_candidates,
+        chunk_candidates_per_document=plan.chunk_candidates_per_document,
+        top_k=plan.top_k,
+        unique_document_slots=plan.unique_document_slots,
+        rrf_k=plan.rrf_k,
         rerank_batch_size=plan.rerank_batch_size,
+        rerank_instruction=plan.rerank_instruction,
     )
     knowledge = KnowledgeBase(plan.corpus_root)
     full_chars = knowledge.full_content_characters
     records: list[dict[str, Any]] = []
     for case in cases:
-        results = retriever.search(
-            case["question"],
-            strategy=plan.strategy,
-            top_k=plan.top_k,
-            max_chunks_per_document=plan.max_chunks_per_document,
-            rrf_k=plan.rrf_k,
-            candidate_k=plan.candidate_k,
-            candidate_max_chunks_per_document=plan.candidate_max_chunks_per_document,
-        )
+        results = retriever.search(case["question"])
         required = set(case.get("required_documents", []))
         documents = list(dict.fromkeys(result.chunk.document_id for result in results))
         retrieved = set(documents)
         recall = len(required & retrieved) / len(required) if required else 1.0
         precision = len(required & retrieved) / len(retrieved) if retrieved else (1.0 if not required else 0.0)
-        first_required_rank = next(
-            (result.rank for result in results if result.chunk.document_id in required),
-            None,
-        )
+        first_required_rank = next((result.rank for result in results if result.chunk.document_id in required), None)
         chunk_chars = sum(len(result.chunk.text) for result in results)
         expected = tuple(str(value) for value in case.get("expected_contains", []))
         retrieved_evidence = "\n".join(result.chunk.text for result in results)
-        answer_evidence_coverage = answer_matches_expected(
-            retrieved_evidence,
-            expected,
-            question=case["question"],
-        )
+        evidence_coverage = answer_matches_expected(retrieved_evidence, expected, question=case["question"])
         records.append(
             {
                 "case_id": case["id"],
@@ -94,18 +84,16 @@ def run_retrieval_eval(
                 "retrieved_chunks": len(results),
                 "retrieved_unique_documents": len(documents),
                 "knowledge_content_fraction_loaded": chunk_chars / full_chars if full_chars else 0.0,
-                "answer_evidence_coverage": answer_evidence_coverage,
+                "answer_evidence_coverage": evidence_coverage,
                 "chunks": [
                     {
                         "rank": result.rank,
                         "chunk_id": result.chunk.id,
                         "document_id": result.chunk.document_id,
-                        "score": result.score,
-                        "dense_rank": result.dense_rank,
-                        "lexical_rank": result.lexical_rank,
-                        "fusion_rank": result.fusion_rank,
-                        "fusion_score": result.fusion_score,
+                        "document_rank": result.document_rank,
                         "rerank_score": result.rerank_score,
+                        "within_document_rank": result.within_document_rank,
+                        "selection_phase": result.selection_phase,
                     }
                     for result in results
                 ],
@@ -122,35 +110,38 @@ def run_retrieval_eval(
     precisions = [float(record["document_precision"]) for record in records]
     docs = [float(record["retrieved_unique_documents"]) for record in records]
     fractions = [float(record["knowledge_content_fraction_loaded"]) for record in records]
-    ranks = [float(record["first_required_chunk_rank"]) for record in records if record["first_required_chunk_rank"] is not None]
-    evidence_coverage = [bool(record["answer_evidence_coverage"]) for record in records]
+    ranks = [
+        float(record["first_required_chunk_rank"])
+        for record in records
+        if record["first_required_chunk_rank"] is not None
+    ]
+    evidence = [bool(record["answer_evidence_coverage"]) for record in records]
     summary = {
         "schema_version": 1,
         "experiment_name": plan.name,
-        "retrieval_method": f"rag-{plan.strategy}",
+        "retrieval_method": "qwen-hierarchical-hybrid",
         "corpus_name": plan.corpus_name,
         "dataset": str(plan.dataset),
         "cases": len(records),
         "complete_discovery_rate": sum(bool(record["complete_discovery"]) for record in records) / len(records),
         "mean_required_document_recall": statistics.fmean(recalls),
         "mean_document_precision": statistics.fmean(precisions),
+        "answer_evidence_coverage_rate": sum(evidence) / len(evidence),
         "mean_unique_documents": statistics.fmean(docs),
         "p95_unique_documents": _p95(docs),
         "mean_first_required_chunk_rank": statistics.fmean(ranks) if ranks else None,
         "mean_knowledge_content_fraction_loaded": statistics.fmean(fractions),
-        "answer_evidence_coverage_rate": sum(evidence_coverage) / len(evidence_coverage),
         "top_k": plan.top_k,
-        "max_chunks_per_document": plan.max_chunks_per_document,
-        "rrf_k": plan.rrf_k if plan.strategy in {"hybrid", "hybrid_rerank"} else None,
-        "candidate_k": plan.candidate_k if plan.strategy == "hybrid_rerank" else None,
-        "candidate_max_chunks_per_document": plan.candidate_max_chunks_per_document if plan.strategy == "hybrid_rerank" else None,
-        "reranker_model": plan.reranker_model if plan.strategy == "hybrid_rerank" else None,
+        "document_candidates": plan.document_candidates,
+        "chunk_candidates_per_document": plan.chunk_candidates_per_document,
+        "unique_document_slots": plan.unique_document_slots,
+        "rrf_k": plan.rrf_k,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     summary_path = output_dir / "summary.json"
     summary_path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     report = [
-        f"# RAG retrieval-only report — {plan.strategy}",
+        "# Qwen hierarchical-hybrid RAG retrieval-only report",
         "",
         f"- Corpus: `{plan.corpus_name}`",
         f"- Dataset: `{plan.dataset}`",
@@ -162,7 +153,7 @@ def run_retrieval_eval(
         f"- Mean unique documents represented: **{summary['mean_unique_documents']:.2f}**",
         f"- Mean corpus body fraction loaded: **{100 * summary['mean_knowledge_content_fraction_loaded']:.2f}%**",
         "",
-        "This stage performs no answer-model calls; retrieval is fully local.",
+        "This stage performs no answer-model calls; embedding, BM25, hierarchy, reranking, and packing are local.",
     ]
     report_path = output_dir / "report.md"
     report_path.write_text("\n".join(report) + "\n", encoding="utf-8")

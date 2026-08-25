@@ -336,3 +336,20 @@ def test_v18_cross_corpus_suites_use_release_dataset_and_three_selection_rounds(
     assert "suite: eval-all-v18" in full.stdout
     assert "case trials: 180" in full.stdout
     assert "model calls (nominal): 360 minimum, 1080 maximum" in full.stdout
+
+
+def test_rag_hybrid_rerank_suite_dry_run_and_pipeline_help():
+    suite = run_cli(
+        "scripts/run_rag_suite.py",
+        "--suite",
+        "experiments/suites/rag-hybrid-rerank-all.yaml",
+        "--dry-run",
+    )
+    assert suite.returncode == 0, suite.stderr
+    assert "suite: rag-hybrid-rerank-k6-all" in suite.stdout
+    assert "rag-hybrid_rerank" in suite.stdout
+    assert "candidate_k=24" in suite.stdout
+
+    pipeline = run_cli("scripts/run_rag_v2_pipeline.py", "--help")
+    assert pipeline.returncode == 0, pipeline.stderr
+    assert "--with-paid-evals" in pipeline.stdout

@@ -435,3 +435,72 @@ Do not compare those raw RAG citation-strict values to progressive disclosure wi
 `complete_discovery` currently means that at least one retrieved chunk belongs to every required document. It does **not** prove that the retrieved chunks contain every answer-bearing passage from those documents.
 
 This distinction matters for chunk RAG and should be considered when debugging a case classified as an answer/application failure. Inspect the actual top-K excerpts before deciding that the answer model failed despite sufficient evidence.
+
+## Hybrid RAG v2: local cross-encoder reranking
+
+The original `hybrid` strategy remains frozen as the measured K6 baseline. A second strategy, `hybrid_rerank`, adds one local precision stage without changing the final answer context size or adding a generation-model call:
+
+```text
+dense + BM25
+  -> RRF
+  -> 24 candidate chunks
+  -> local cross-encoder reranker
+  -> best 6 chunks
+  -> answer
+```
+
+Default configuration:
+
+```yaml
+strategy: hybrid_rerank
+top_k: 6
+max_chunks_per_document: 2
+rrf_k: 60
+candidate_k: 24
+candidate_max_chunks_per_document: 4
+reranker_model: cross-encoder/ms-marco-MiniLM-L6-v2
+rerank_batch_size: 16
+```
+
+No additional Python dependency is required beyond `requirements-rag.txt`; the reranker is loaded through `sentence-transformers`. The first v2 run downloads the reranker unless it is already cached. `--offline` applies to both the embedding model and reranker.
+
+Run retrieval-only v2 checks:
+
+```bash
+python scripts/run_rag_retrieval_eval.py \
+  --config experiments/rag/hybrid-rerank-northstar.yaml \
+  --device mps
+
+python scripts/run_rag_retrieval_eval.py \
+  --config experiments/rag/hybrid-rerank-tell-aster.yaml \
+  --device mps
+```
+
+Run the full v2 E2E suite:
+
+```bash
+python scripts/run_rag_suite.py \
+  --suite experiments/suites/rag-hybrid-rerank-all.yaml \
+  --device mps
+```
+
+For the rationale, metrics, and experiment discipline, see [`rag-reranking.md`](rag-reranking.md).
+
+## Run the complete RAG v2 validation unattended
+
+To execute deterministic checks, rebuild indexes, rerun the frozen hybrid retrieval baselines, run the new reranked retrieval checks, smoke-test the answer API, and finally run the complete paid v2 suite with one command:
+
+```bash
+python scripts/run_rag_v2_pipeline.py \
+  --device mps \
+  --with-paid-evals
+```
+
+The script fails before the paid stage if any deterministic or local retrieval step errors. Outputs and a combined log are stored below one timestamped `results/*-rag-hybrid-rerank-v2-pipeline/` directory.
+
+
+## Separate Qwen hierarchical pipeline
+
+The measured dense/hybrid baselines in this document remain frozen. A separate experimental pipeline using pinned local Qwen embedding and reranking models, hierarchical document-to-chunk retrieval, and coverage-aware context packing lives under `src/qwen_rag_pipeline/`.
+
+See [`qwen-rag-pipeline.md`](qwen-rag-pipeline.md) for setup, pinned model downloads, index construction, local retrieval evaluation, and the paid comparison suite.

@@ -334,3 +334,164 @@ def test_rag_answerer_deduplicates_sources_client_side() -> None:
         [RagSearchResult(rank=1, chunk=chunk, score=1.0, dense_rank=1)],
     )
     assert result.cited_sources == ("DOC-A",)
+
+
+def test_hybrid_rerank_configs_are_bounded_and_local() -> None:
+    northstar = load_rag_plan("experiments/rag/hybrid-rerank-northstar.yaml")
+    tell_aster = load_rag_plan("experiments/rag/hybrid-rerank-tell-aster.yaml")
+    for plan in (northstar, tell_aster):
+        assert plan.strategy == "hybrid_rerank"
+        assert plan.top_k == 6
+        assert plan.candidate_k == 24
+        assert plan.max_chunks_per_document == 2
+        assert plan.candidate_max_chunks_per_document == 4
+        assert plan.reranker_model == "cross-encoder/ms-marco-MiniLM-L6-v2"
+        assert plan.rerank_batch_size == 16
+
+
+def test_hybrid_reranker_can_promote_better_candidate(tmp_path) -> None:
+    pytest = __import__("pytest")
+    np = pytest.importorskip("numpy")
+    from rag_baseline.index import LoadedRagIndex, RagIndexManifest
+    from rag_baseline.models import RagChunk
+    from rag_baseline.retrieval import LocalRetriever
+
+    chunks = [
+        RagChunk(
+            id="DOC-A::c001",
+            document_id="DOC-A",
+            title="Alpha",
+            description="alpha lexical match",
+            path="a.md",
+            heading="",
+            text="Alpha is mentioned but this is not the requested evidence.",
+            search_text="Alpha alpha alpha unrelated.",
+        ),
+        RagChunk(
+            id="DOC-B::c001",
+            document_id="DOC-B",
+            title="Beta",
+            description="answer passage",
+            path="b.md",
+            heading="",
+            text="This passage directly answers the complete question.",
+            search_text="This passage directly answers the complete question.",
+        ),
+    ]
+    embeddings = np.asarray([[1.0, 0.0], [0.7, 0.7]], dtype=np.float32)
+    embeddings /= np.linalg.norm(embeddings, axis=1, keepdims=True)
+    manifest = RagIndexManifest(
+        schema_version=1,
+        corpus_name="fake",
+        corpus_root="fake",
+        corpus_sha256="abc",
+        embedding_model="fake",
+        query_prefix="",
+        chunk_words=320,
+        overlap_words=64,
+        document_count=2,
+        chunk_count=2,
+        embedding_dimensions=2,
+        created_at="now",
+    )
+    retriever = LocalRetriever(LoadedRagIndex(tmp_path, manifest, chunks, embeddings))
+
+    class FakeEncoder:
+        def encode(self, texts, **kwargs):
+            return np.asarray([[1.0, 0.0]], dtype=np.float32)
+
+    class FakeReranker:
+        def scores(self, question, candidate_chunks):
+            return [0.1 if chunk.document_id == "DOC-A" else 0.9 for chunk in candidate_chunks]
+
+    retriever._encoder = FakeEncoder()
+    retriever._reranker = FakeReranker()
+    result = retriever.hybrid_rerank(
+        "alpha question",
+        top_k=1,
+        candidate_k=2,
+        max_chunks_per_document=1,
+        candidate_max_chunks_per_document=1,
+    )
+    assert result[0].chunk.document_id == "DOC-B"
+    assert result[0].rerank_score == 0.9
+    assert result[0].fusion_rank is not None
+
+
+def test_hybrid_rerank_rejects_candidate_window_smaller_than_final_window(tmp_path) -> None:
+    pytest = __import__("pytest")
+    np = pytest.importorskip("numpy")
+    from rag_baseline.index import LoadedRagIndex, RagIndexManifest
+    from rag_baseline.models import RagChunk
+    from rag_baseline.retrieval import LocalRetriever
+
+    chunk = RagChunk(
+        id="DOC-A::c001",
+        document_id="DOC-A",
+        title="Alpha",
+        description="alpha",
+        path="a.md",
+        heading="",
+        text="alpha",
+        search_text="alpha",
+    )
+    manifest = RagIndexManifest(
+        schema_version=1,
+        corpus_name="fake",
+        corpus_root="fake",
+        corpus_sha256="abc",
+        embedding_model="fake",
+        query_prefix="",
+        chunk_words=320,
+        overlap_words=64,
+        document_count=1,
+        chunk_count=1,
+        embedding_dimensions=1,
+        created_at="now",
+    )
+    retriever = LocalRetriever(LoadedRagIndex(tmp_path, manifest, [chunk], np.asarray([[1.0]], dtype=np.float32)))
+    with pytest.raises(ValueError, match="candidate_k"):
+        retriever.hybrid_rerank("alpha", top_k=2, candidate_k=1)
+
+
+def test_local_cross_encoder_reranker_uses_cached_model_and_predict_contract(monkeypatch) -> None:
+    pytest = __import__("pytest")
+    np = pytest.importorskip("numpy")
+    import sys
+    from types import SimpleNamespace
+    from rag_baseline.models import RagChunk
+    from rag_baseline.reranking import LocalCrossEncoderReranker
+
+    calls = {}
+
+    class FakeCrossEncoder:
+        def __init__(self, model_name, **kwargs):
+            calls["init"] = (model_name, kwargs)
+
+        def predict(self, pairs, **kwargs):
+            calls["predict"] = (pairs, kwargs)
+            return np.asarray([[0.25], [0.75]], dtype=np.float32)
+
+    monkeypatch.setitem(sys.modules, "sentence_transformers", SimpleNamespace(CrossEncoder=FakeCrossEncoder))
+    chunks = [
+        RagChunk("A::c001", "A", "A", "", "a.md", "", "alpha", "alpha"),
+        RagChunk("B::c001", "B", "B", "", "b.md", "", "beta", "beta"),
+    ]
+    reranker = LocalCrossEncoderReranker(
+        model_name="fake-reranker",
+        device="mps",
+        offline=True,
+        batch_size=7,
+    )
+    assert reranker.scores("question", chunks) == pytest.approx([0.25, 0.75])
+    assert calls["init"] == (
+        "fake-reranker",
+        {"local_files_only": True, "device": "mps"},
+    )
+    pairs, kwargs = calls["predict"]
+    assert pairs == [("question", "alpha"), ("question", "beta")]
+    assert kwargs == {
+        "batch_size": 7,
+        "show_progress_bar": False,
+        "convert_to_numpy": True,
+    }

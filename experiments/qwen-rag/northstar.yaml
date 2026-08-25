@@ -1,0 +1,17 @@
+name: qwen-hierarchical-hybrid-k8-northstar
+dataset: datasets/eval-v1.yaml
+corpus: northstar
+index_dir: results/qwen-rag-indexes/northstar
+model_root: models/qwen-rag
+top_k: 8
+document_candidates: 12
+chunk_candidates_per_document: 4
+unique_document_slots: 5
+rrf_k: 60
+rerank_batch_size: 8
+rerank_instruction: >-
+  Given a knowledge-base question and a passage from a candidate document, judge whether
+  the passage contains evidence needed to answer any part of the question.
+runs_per_case: 1
+model: env:OPENAI_MODEL
+prompt: prompts/rag/system-v1.md

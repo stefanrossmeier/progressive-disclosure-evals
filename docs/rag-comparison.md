@@ -189,3 +189,9 @@ A production decision therefore depends on the workload:
 These are single full runs over synthetic corpora that have participated in system development. They establish useful engineering behavior, not a universal production guarantee.
 
 Before making a strong generalization claim, evaluate the frozen systems on another untouched corpus and repeat the full benchmark enough times to measure run-to-run variance.
+
+## Next experiment: hybrid reranking v2
+
+The measured table above remains frozen for the original dense K6 and hybrid K6 baselines. The repository now also contains a `hybrid_rerank` experiment that expands the hybrid candidate set locally and applies a compact cross-encoder before selecting the same final six answer chunks.
+
+This new configuration is intentionally **not** added to the measured comparison table until its retrieval-only and end-to-end suites have been run. See [`rag-reranking.md`](rag-reranking.md).

@@ -5,7 +5,7 @@
 The repository now evaluates two retrieval architectures over the same Markdown corpora and evaluator:
 
 1. **progressive disclosure** — compact metadata -> explicit evidence plan -> selected full document bodies -> answer;
-2. **local RAG** — local dense or hybrid chunk retrieval -> top-K chunks -> answer.
+2. **local RAG** — local dense/hybrid candidate retrieval, optionally followed by local cross-encoder reranking -> top-K chunks -> answer.
 
 The experiment is designed to separate retrieval quality from answer quality while keeping corpus content, benchmark questions, and answer generation as comparable as possible.
 
@@ -50,7 +50,9 @@ question -> dense rank -----\
 question -> BM25 rank ------/
 ```
 
-Retrieval makes no LLM call. End-to-end RAG uses the same configured OpenAI answer model so the comparison changes retrieval rather than both retrieval and generation.
+Hybrid rerank v2 keeps the same candidate generator but reranks a bounded top-24 candidate set with a local cross-encoder before selecting the final top-6 chunks.
+
+Retrieval and reranking make no LLM call. End-to-end RAG uses the same configured OpenAI answer model so the comparison changes retrieval rather than both retrieval and generation.
 
 See [`rag-baselines.md`](rag-baselines.md) for implementation and commands and [`rag-comparison.md`](rag-comparison.md) for measured results.
 
@@ -154,7 +156,7 @@ answer-bearing evidence in context = failure
 
 When diagnosing RAG failures, inspect the retrieved excerpts before classifying the case as an answer-model reasoning failure.
 
-A future evaluator improvement should explicitly measure **answer-evidence coverage** at chunk level in addition to required-document discovery.
+The retrieval-only evaluator now also measures **answer-evidence coverage** at chunk level using the benchmark's deterministic semantic matcher. This is a diagnostic metric only: expected values are evaluator-side and are never exposed to retrieval or reranking.
 
 ## Current benchmark interpretation
 

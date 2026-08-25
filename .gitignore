@@ -38,3 +38,6 @@ dist/
 # Archive metadata
 __MACOSX/
 *.patch
+
+# Downloaded local models
+/models/

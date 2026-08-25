@@ -1,0 +1,4 @@
+name: qwen-hierarchical-hybrid-k8-all
+configs:
+  - experiments/qwen-rag/northstar.yaml
+  - experiments/qwen-rag/tell-aster.yaml

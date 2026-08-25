@@ -1,0 +1,15 @@
+name: rag-hybrid-rerank-k6-tell-aster
+dataset: datasets/tell-aster-eval-v2.yaml
+corpus: tell-aster
+index_dir: results/rag-indexes/tell-aster
+strategy: hybrid_rerank
+top_k: 6
+max_chunks_per_document: 2
+rrf_k: 60
+candidate_k: 24
+candidate_max_chunks_per_document: 4
+reranker_model: cross-encoder/ms-marco-MiniLM-L6-v2
+rerank_batch_size: 16
+runs_per_case: 1
+model: env:OPENAI_MODEL
+prompt: prompts/rag/system-v1.md

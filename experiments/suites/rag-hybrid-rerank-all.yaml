@@ -1,0 +1,4 @@
+name: rag-hybrid-rerank-k6-all
+configs:
+  - experiments/rag/hybrid-rerank-northstar.yaml
+  - experiments/rag/hybrid-rerank-tell-aster.yaml

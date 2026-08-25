@@ -1,0 +1,6 @@
+-r requirements.txt
+numpy>=1.26
+huggingface-hub>=0.33,<2
+sentence-transformers>=5.4,<7
+transformers>=4.51,<7
+torch>=2.2

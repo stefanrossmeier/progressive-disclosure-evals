@@ -22,3 +22,6 @@ class RagSearchResult:
     score: float
     dense_rank: int | None = None
     lexical_rank: int | None = None
+    fusion_rank: int | None = None
+    fusion_score: float | None = None
+    rerank_score: float | None = None

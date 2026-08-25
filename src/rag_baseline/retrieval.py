@@ -8,6 +8,7 @@ from typing import Any, Iterable
 
 from .index import LoadedRagIndex, _sentence_transformer
 from .models import RagSearchResult
+from .reranking import DEFAULT_RERANKER_MODEL, LocalCrossEncoderReranker
 
 
 _TOKEN_RE = re.compile(r"[A-Za-z0-9]+(?:[._/-][A-Za-z0-9]+)*")
@@ -17,8 +18,6 @@ def lexical_tokens(text: str) -> list[str]:
     """BM25 tokenizer that deliberately preserves identifiers such as TA-EXC-06."""
 
     return [match.group(0).casefold() for match in _TOKEN_RE.finditer(text)]
-
-
 
 
 @dataclass(frozen=True)
@@ -108,11 +107,14 @@ class LocalRetriever:
     index: LoadedRagIndex
     device: str | None = None
     offline: bool = False
+    reranker_model: str = DEFAULT_RERANKER_MODEL
+    rerank_batch_size: int = 16
 
     def __post_init__(self) -> None:
         self._encoder: Any | None = None
         self._bm25: Any | None = None
         self._tokenized_corpus: list[list[str]] | None = None
+        self._reranker: LocalCrossEncoderReranker | None = None
 
     @property
     def encoder(self):
@@ -131,6 +133,17 @@ class LocalRetriever:
             self._bm25 = Bm25Index(tuple(tuple(tokens) for tokens in self._tokenized_corpus))
         return self._bm25
 
+    @property
+    def reranker(self) -> LocalCrossEncoderReranker:
+        if self._reranker is None:
+            self._reranker = LocalCrossEncoderReranker(
+                model_name=self.reranker_model,
+                device=self.device,
+                offline=self.offline,
+                batch_size=self.rerank_batch_size,
+            )
+        return self._reranker
+
     def _query_vector(self, question: str):
         try:
             import numpy as np
@@ -146,6 +159,22 @@ class LocalRetriever:
             normalize_embeddings=True,
         )
         return np.asarray(vector[0], dtype=np.float32)
+
+    def _hybrid_components(self, question: str, *, rrf_k: int):
+        try:
+            import numpy as np
+        except ImportError as exc:  # pragma: no cover - optional install
+            raise RuntimeError(
+                "local RAG requires numpy; install with: pip install -r requirements-rag.txt"
+            ) from exc
+        vector = self._query_vector(question)
+        dense_scores = self.index.embeddings @ vector
+        dense_order = np.argsort(-dense_scores, kind="stable").tolist()
+        lexical_scores = np.asarray(self.bm25.scores(lexical_tokens(question)), dtype=np.float32)
+        lexical_order = np.argsort(-lexical_scores, kind="stable").tolist()
+        fused = reciprocal_rank_fusion(dense_order, lexical_order, rrf_k=rrf_k)
+        fused_order = sorted(fused, key=lambda idx: (-fused[idx], idx))
+        return dense_order, lexical_order, fused, fused_order
 
     def dense(
         self,
@@ -169,12 +198,13 @@ class LocalRetriever:
             top_k=top_k,
             max_per_doc=max_chunks_per_document,
         )
+        ranks = _rank_map(order)
         return [
             RagSearchResult(
                 rank=rank,
                 chunk=self.index.chunks[chunk_index],
                 score=float(scores[chunk_index]),
-                dense_rank=order.index(chunk_index) + 1,
+                dense_rank=ranks[chunk_index],
             )
             for rank, chunk_index in enumerate(selected, start=1)
         ]
@@ -187,21 +217,70 @@ class LocalRetriever:
         max_chunks_per_document: int = 2,
         rrf_k: int = 60,
     ) -> list[RagSearchResult]:
-        try:
-            import numpy as np
-        except ImportError as exc:  # pragma: no cover - optional install
-            raise RuntimeError(
-                "local RAG requires numpy; install with: pip install -r requirements-rag.txt"
-            ) from exc
-        vector = self._query_vector(question)
-        dense_scores = self.index.embeddings @ vector
-        dense_order = np.argsort(-dense_scores, kind="stable").tolist()
-        lexical_scores = np.asarray(self.bm25.scores(lexical_tokens(question)), dtype=np.float32)
-        lexical_order = np.argsort(-lexical_scores, kind="stable").tolist()
-        fused = reciprocal_rank_fusion(dense_order, lexical_order, rrf_k=rrf_k)
-        fused_order = sorted(fused, key=lambda idx: (-fused[idx], idx))
+        dense_order, lexical_order, fused, fused_order = self._hybrid_components(question, rrf_k=rrf_k)
         selected = _cap_per_document(
             fused_order,
+            self.index,
+            top_k=top_k,
+            max_per_doc=max_chunks_per_document,
+        )
+        dense_ranks = _rank_map(dense_order)
+        lexical_ranks = _rank_map(lexical_order)
+        fusion_ranks = _rank_map(fused_order)
+        return [
+            RagSearchResult(
+                rank=rank,
+                chunk=self.index.chunks[chunk_index],
+                score=float(fused[chunk_index]),
+                dense_rank=dense_ranks[chunk_index],
+                lexical_rank=lexical_ranks[chunk_index],
+                fusion_rank=fusion_ranks[chunk_index],
+                fusion_score=float(fused[chunk_index]),
+            )
+            for rank, chunk_index in enumerate(selected, start=1)
+        ]
+
+    def hybrid_rerank(
+        self,
+        question: str,
+        *,
+        top_k: int = 6,
+        max_chunks_per_document: int = 2,
+        rrf_k: int = 60,
+        candidate_k: int = 24,
+        candidate_max_chunks_per_document: int = 4,
+    ) -> list[RagSearchResult]:
+        """Generate broad hybrid candidates, then rerank locally with a cross-encoder.
+
+        Candidate generation remains cheap and high-recall (dense + BM25 + RRF).
+        The cross-encoder sees only the bounded candidate set and decides which
+        chunks are most relevant to the full question before answer context is
+        assembled. Both stages are local; the answer model call remains unchanged.
+        """
+
+        if candidate_k < top_k:
+            raise ValueError("candidate_k must be >= top_k")
+        if candidate_max_chunks_per_document < max_chunks_per_document:
+            raise ValueError(
+                "candidate_max_chunks_per_document must be >= max_chunks_per_document"
+            )
+        dense_order, lexical_order, fused, fused_order = self._hybrid_components(question, rrf_k=rrf_k)
+        candidates = _cap_per_document(
+            fused_order,
+            self.index,
+            top_k=candidate_k,
+            max_per_doc=candidate_max_chunks_per_document,
+        )
+        chunks = [self.index.chunks[index] for index in candidates]
+        rerank_scores = self.reranker.scores(question, chunks)
+        rerank_by_index = {index: rerank_scores[pos] for pos, index in enumerate(candidates)}
+        fusion_ranks = _rank_map(fused_order)
+        reranked_order = sorted(
+            candidates,
+            key=lambda idx: (-rerank_by_index[idx], fusion_ranks[idx], idx),
+        )
+        selected = _cap_per_document(
+            reranked_order,
             self.index,
             top_k=top_k,
             max_per_doc=max_chunks_per_document,
@@ -212,9 +291,12 @@ class LocalRetriever:
             RagSearchResult(
                 rank=rank,
                 chunk=self.index.chunks[chunk_index],
-                score=float(fused[chunk_index]),
+                score=float(rerank_by_index[chunk_index]),
                 dense_rank=dense_ranks[chunk_index],
                 lexical_rank=lexical_ranks[chunk_index],
+                fusion_rank=fusion_ranks[chunk_index],
+                fusion_score=float(fused[chunk_index]),
+                rerank_score=float(rerank_by_index[chunk_index]),
             )
             for rank, chunk_index in enumerate(selected, start=1)
         ]
@@ -227,6 +309,8 @@ class LocalRetriever:
         top_k: int = 6,
         max_chunks_per_document: int = 2,
         rrf_k: int = 60,
+        candidate_k: int = 24,
+        candidate_max_chunks_per_document: int = 4,
     ) -> list[RagSearchResult]:
         if strategy == "dense":
             return self.dense(
@@ -241,4 +325,13 @@ class LocalRetriever:
                 max_chunks_per_document=max_chunks_per_document,
                 rrf_k=rrf_k,
             )
-        raise ValueError("strategy must be 'dense' or 'hybrid'")
+        if strategy == "hybrid_rerank":
+            return self.hybrid_rerank(
+                question,
+                top_k=top_k,
+                max_chunks_per_document=max_chunks_per_document,
+                rrf_k=rrf_k,
+                candidate_k=candidate_k,
+                candidate_max_chunks_per_document=candidate_max_chunks_per_document,
+            )
+        raise ValueError("strategy must be 'dense', 'hybrid', or 'hybrid_rerank'")
