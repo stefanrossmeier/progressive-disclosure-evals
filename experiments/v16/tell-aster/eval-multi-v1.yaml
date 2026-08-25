@@ -1,0 +1,10 @@
+name: tell-aster-eval-v1-v16-multi
+dataset: datasets/tell-aster-eval-v1.yaml
+case_tags:
+  - multi_doc
+runs_per_case: 1
+max_documents: 4
+prompts:
+  - prompts/agent/system-v16.md
+models:
+  - env:OPENAI_MODEL

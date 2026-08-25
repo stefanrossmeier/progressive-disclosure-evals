@@ -1,0 +1,21 @@
+# Fast local model-backed verification set. These cases intentionally cover
+# historically difficult routing boundaries across several corpus areas.
+name: verify-v1-v17-single
+dataset: datasets/eval-v1.yaml
+case_tags:
+  - single_doc
+case_ids:
+  - EVAL-001
+  - EVAL-004
+  - EVAL-012
+  - EVAL-015
+  - EVAL-020
+  - EVAL-024
+  - EVAL-026
+  - EVAL-033
+runs_per_case: 3
+max_documents: 4
+prompts:
+  - prompts/agent/system-v17.md
+models:
+  - env:OPENAI_MODEL

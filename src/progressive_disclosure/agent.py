@@ -50,9 +50,9 @@ class ProgressiveDisclosureAgent:
 
     The first model call maps atomic answer obligations to the smallest complete set
     of document bodies it expects to need. Those bodies are disclosed together and a
-    second call resolves the answer. One bounded recovery selection is available only
-    for a concrete missing obligation. This keeps single-document work on the reliable
-    two-call path while making genuine multi-document composition explicit up front.
+    second call resolves the answer. Recovery selections are bounded and available only for a concrete missing obligation.
+    The configured round limit keeps single-document work on the reliable two-call path
+    when the first plan is sufficient while allowing targeted progressive discovery when it is not.
     """
 
     def __init__(
@@ -139,18 +139,25 @@ class ProgressiveDisclosureAgent:
                     )
 
                 selection_rounds += 1
+                discovered_references = tuple(dict.fromkeys(
+                    ref
+                    for doc_id in read_order
+                    for ref in opened[doc_id].references
+                    if ref not in opened and any(item.id == ref for item in available)
+                ))
                 state = build_selection_state(
                     question=question,
                     catalog=available,
                     already_opened=tuple(read_order),
                     missing_information=missing_information,
+                    discovered_references=discovered_references,
                 )
                 tool = build_select_documents_tool(
                     available,
                     max_documents=remaining_budget,
                 )
                 available_ids = {item.id for item in available}
-                selection_args: tuple[list[str], list[str], list[tuple[str, str]], str] | None = None
+                selection_args: tuple[list[tuple[str, str]], str] | None = None
                 for protocol_attempt in range(self.max_protocol_retries + 1):
                     model_turns += 1
                     turn = self.backend.respond(
@@ -181,8 +188,6 @@ class ProgressiveDisclosureAgent:
                     else:
                         tool_calls += 1
                         args = turn.tool_calls[0].arguments
-                        active_qualifiers = args.get("active_qualifiers")
-                        excluded_qualifiers = args.get("excluded_qualifiers")
                         raw_plan = args.get("evidence_plan")
                         primary = args.get("primary_document_id")
                         parsed_plan: list[tuple[str, str]] = []
@@ -201,16 +206,12 @@ class ProgressiveDisclosureAgent:
                                 parsed_plan.append((item["need"].strip(), item["document_id"]))
                         plan_ids = {document_id for _, document_id in parsed_plan}
                         if (
-                            isinstance(active_qualifiers, list)
-                            and all(isinstance(item, str) for item in active_qualifiers)
-                            and isinstance(excluded_qualifiers, list)
-                            and all(isinstance(item, str) for item in excluded_qualifiers)
-                            and isinstance(primary, str)
+                            isinstance(primary, str)
                             and primary in available_ids
                             and plan_ok
                             and primary in plan_ids
                         ):
-                            selection_args = (active_qualifiers, excluded_qualifiers, parsed_plan, primary)
+                            selection_args = (parsed_plan, primary)
                             break
                         error = "invalid_select_documents_arguments"
 
@@ -252,7 +253,7 @@ class ProgressiveDisclosureAgent:
                         selection_rounds=selection_rounds,
                     )
 
-                active_qualifiers, excluded_qualifiers, round_plan, primary = selection_args
+                round_plan, primary = selection_args
 
                 planned_ids = [document_id for _, document_id in round_plan]
                 selected = list(dict.fromkeys([primary, *planned_ids]))
@@ -273,8 +274,6 @@ class ProgressiveDisclosureAgent:
                         kind="select_documents",
                         data={
                             "selection_round": selection_rounds,
-                            "active_qualifiers": active_qualifiers,
-                            "excluded_qualifiers": excluded_qualifiers,
                             "evidence_plan": [
                                 {"need": need, "document_id": document_id}
                                 for need, document_id in disclosed_round_plan

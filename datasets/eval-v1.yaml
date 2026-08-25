@@ -1,5 +1,7 @@
 name: eval-v1
 version: 1
+profile: benchmark
+corpus: northstar
 description: Held-out metadata-first progressive-disclosure benchmark. Forty single-document cases cover every corpus
   leaf; twenty multi-document cases test composition and precedence.
 cases:

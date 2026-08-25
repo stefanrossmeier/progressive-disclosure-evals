@@ -13,6 +13,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 from evals.benchmark import load_eval_dataset, select_cases
+from progressive_disclosure.corpora import corpus_name_from_dataset, get_corpus_spec
 from evals.diagnostics import evaluate_oracle_answer, evaluate_selection_only
 from progressive_disclosure.config import (
     get_openai_model,
@@ -49,6 +50,8 @@ def main() -> int:
         parser.error("--limit must be >= 1")
 
     dataset = load_eval_dataset(args.dataset)
+    corpus_name = corpus_name_from_dataset(dataset)
+    corpus_root = get_corpus_spec(corpus_name).root
     cases = select_cases(
         dataset["cases"],
         case_ids=set(args.case) if args.case else None,
@@ -66,6 +69,7 @@ def main() -> int:
     if args.dry_run:
         print(f"mode: {args.mode}")
         print(f"dataset: {dataset['name']} v{dataset['version']}")
+        print(f"corpus: {corpus_name} ({corpus_root})")
         print(f"cases: {len(cases)}")
         print(f"model: {model}")
         print(f"prompt: {prompt.id}@v{prompt.version}")
@@ -94,6 +98,8 @@ def main() -> int:
         "dataset": args.dataset,
         "dataset_name": dataset["name"],
         "dataset_version": dataset["version"],
+        "corpus_name": corpus_name,
+        "corpus_root": str(corpus_root),
         "model": model,
         "prompt": args.prompt,
         "prompt_id": prompt.id,
@@ -115,6 +121,7 @@ def main() -> int:
                         case,
                         backend=backend,
                         prompt=prompt,
+                        corpus_root=corpus_root,
                         **({"max_documents": args.max_documents} if args.mode == "selection" else {}),
                     )
                     record = {**result, "repeat_index": repeat, "model": model, "status": "completed"}

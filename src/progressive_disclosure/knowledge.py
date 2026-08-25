@@ -47,17 +47,13 @@ class KnowledgeBase:
                 metadata.get("description"), path, "description"
             )
             version = metadata.get("version")
-            if not isinstance(version, int):
-                raise InvalidCorpusError(f"{path}: version must be an integer")
+            if version is not None and not isinstance(version, int):
+                raise InvalidCorpusError(f"{path}: version must be an integer when present")
             if not body.strip():
                 raise InvalidCorpusError(f"{path}: document body is empty")
 
-            expected_id = ".".join(relative.with_suffix("").parts)
-            if document_id != expected_id:
-                raise InvalidCorpusError(
-                    f"{path}: id {document_id!r} does not match path-derived "
-                    f"id {expected_id!r}"
-                )
+            # Document IDs are stable corpus metadata. Directory structure is organizational
+            # only and must not constrain corpora to one naming convention.
             if document_id in parsed:
                 raise InvalidCorpusError(f"duplicate document id: {document_id}")
 

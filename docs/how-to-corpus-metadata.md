@@ -162,6 +162,128 @@ Examples:
 
 Do not stuff descriptions with every noun in the document. Add terms that materially improve routing against plausible alternatives.
 
+## Treat explicit entity anchors as first-class routing keys
+
+Cross-domain evaluation exposed a failure mode that is easy to miss in policy-style corpora: a question may identify the relevant evidence with a concrete archaeological/object/archive anchor while the metadata only describes a broad document category. Examples of anchor shapes include object IDs (`SF-241`), contexts (`C-511`), walls/features (`W-91`, `F-41`), samples (`OSL-6`), burials (`B-23`), photographs (`PR-2014-337`), and record IDs (`O-31`).
+
+If an anchor is already present in the user question and its purpose is to identify which document body should be opened, it should normally appear in the activation metadata of the document that owns the relevant fact. This is routing vocabulary, not answer leakage.
+
+A useful rule is:
+
+> When the user can name a stable entity before retrieval, make that entity discoverable in metadata wherever it is an important activation boundary.
+
+Do not add the hidden value the user is asking for. For example, metadata may say that the Trench T11 register should be used for `SF-241` recovery-context questions, but it must not reveal the requested context ID. Metadata may say that a doorway-graffiti catalogue covers `D-44`, but it must not disclose the numeral written there.
+
+Check this against the **whole evaluation set**, not only the current question. An identifier can be safe routing context in one case but be a hidden answer in another. If globally visible metadata would reveal a graded answer anywhere in the benchmark, do not publish that value as an activation anchor. Use another question-known boundary instead—for example a review year, document purpose, feature type, or relation endpoint that is already stated in the triggering question. Corpus validation should continue to reject answer values that leak into the always-visible catalog.
+
+This principle is especially important when several neighboring documents have equally plausible human-readable titles. A generic description such as “worked bone catalogue” is not enough to route a question about the excavation context of `SF-241`; the excavation register must expose `SF-241` as an activation anchor too.
+
+## Do not encode an assumed document taxonomy into routing
+
+The selector must route from metadata, not from stereotypes about where a kind of fact “ought” to live. A fact about an object may live in an excavation notebook, a date may be constrained by stratigraphy plus a laboratory report, and a mapped location may require both a field elevation and a topographic survey.
+
+Metadata should therefore state the *fact ownership boundary*, not just the subject category. Prefer descriptions such as:
+
+```text
+Trench T2 deep-sounding notebook. Use when SF-088 is named and the question asks for its field elevation, registration, or excavated setting.
+```
+
+over:
+
+```text
+Early excavation notebook with small finds.
+```
+
+Likewise, specialist metadata should distinguish treatment history from identification, field provenance from catalogue classification, and sample age from geomorphic correlation. This reduces the tendency to choose a document merely because its broad category matches the noun in the question.
+
+## Describe the direction of lookup
+
+A relationship can be discoverable in one direction and still be hard to route in the other. Small models often treat these as different activation problems.
+
+For example, this metadata:
+
+```text
+Legacy provenance review. Use when deciding which object belongs to an older excavation season.
+```
+
+helps with `season -> object`, but it is weak for a question that gives the object and asks for its season. If the body supports both directions and both are legitimate query shapes, describe both without exposing either hidden endpoint:
+
+```text
+Legacy provenance review used to confirm the excavation season or trench attribution of a named older object. Use when given an object and asked which historical season it came from, or for the inverse provenance lookup.
+```
+
+The same principle applies to `floor -> context`, `context -> ceramic horizon`, `sample -> terrace`, `photograph -> context`, and other bridge relationships. Metadata should describe the **operation the user is asking the system to perform**, not merely list the two concepts involved.
+
+A useful review question is:
+
+> Given the entity or condition already stated by the user, does this description make the requested lookup direction obvious?
+
+## Expose multi-document bridge endpoints without exposing the answer
+
+Some questions require one document to identify an entity and a second document to supply the requested property. Metadata should make that bridge predictable before bodies are opened.
+
+Examples of safe bridge language include:
+
+- `Use when SF-203 must be mapped to its burial before another specialist property is retrieved.`
+- `Combine with geomorphology when the question asks which named terrace an OSL sample belongs to.`
+- `Use when a photograph identifier must be mapped to its photographed context before a ceramic lookup.`
+
+This tells the selector that two bodies may be indispensable without revealing the burial ID, terrace name, vessel type, date, or other answer fact.
+
+Do not select extra documents merely for corroboration or background. Every selected body should be expected to contribute either a requested fact or an indispensable bridge/transformation needed to obtain one.
+
+
+## Separate primary-record ownership from later interpretation
+
+When several documents discuss the same entity across time, metadata should state which stage of the evidentiary chain each document owns. A primary field report and a later synthesis can both mention the same installation, but they should not be interchangeable routing targets.
+
+Prefer boundaries such as:
+
+```text
+Primary field record. Use to establish the original excavation interpretation before later specialist reassessment.
+```
+
+and:
+
+```text
+Later specialist synthesis. Use for the reassessment rationale or later functional interpretation, not for the original field label.
+```
+
+Likewise, a context-specific ceramic revision can own `context -> revised horizon`, while a chronology synthesis owns `horizon -> broad absolute range`. If a question requests both, each description should make the two-step bridge predictable without leaking the horizon or date.
+
+This is a fact-ownership boundary, not merely a topical distinction. Repeated selection of a later synthesis for an original-record fact is usually evidence that this boundary is too weak.
+
+## Keep answer grading separate from proof-set validation
+
+A multi-document benchmark needs two different kinds of gold:
+
+1. **Answer expectations** — facts the final user-facing answer must contain.
+2. **Required-evidence anchors** — evidence strings used by dataset validation to prove that every required document contributes something unique.
+
+Do not overload `expected_contains` with long intermediate bridge statements solely to make required-document indispensability mechanically checkable. That makes semantically correct concise answers fail because they omit a derivation sentence the question never asked for.
+
+For strict multi-document corpora, use a separate per-document `required_evidence` mapping when available. The evaluator should grade the answer against answer expectations, while dataset validation should use `required_evidence` to verify that each gold document has a unique contribution.
+
+This separation preserves strict proof-set design without forcing the runtime model to restate every intermediate relation in its final answer.
+
+### Grade the minimum semantic answer actually requested
+
+`expected_contains` should encode the smallest stable answer value that makes the user's requested fact correct. Do not require the model to repeat nouns already supplied by the question.
+
+For example, if the question is `How many large plastered bins ...?`, an answer of `Three.` is semantically complete. Grading only `three large plastered bins` would create a false negative even though the model supplied the requested count. The stronger descriptive phrase can remain in `required_evidence` when it is useful for proving that the gold document contains the relevant evidence.
+
+Prefer answer expectations such as a count, identifier, date range, name, code, or other requested value over a sentence-shaped restatement of the question.
+
+For every `How many ...?` case, audit the entire dataset consistently. The evaluator should accept the requested count alone (`Five.`, `17.`, `31.`) without requiring the model to repeat nouns from the question. Keep a richer contextual phrase such as `17 socketed arrowheads` in `expected_contains` when a bare value like `17` would collide with unrelated always-visible metadata (for example another sample or record identifier) and therefore trigger the global leakage validator. In that situation the matcher, not the runtime prompt, should interpret the leading count semantically. Keep the full descriptive phrase in `required_evidence` when it is useful for proving document contribution. Do not fix only the individual count case that happened to fail.
+
+### Every gold document must answer an explicit request or an indispensable bridge
+
+Do not make a document gold merely because it provides useful historical context. For each required document, ask whether removing it makes at least one requested fact or necessary derivation impossible to establish.
+
+If a multi-document case expects the final answer to include a fact such as an *initial interpretation*, the user question must actually ask for that fact or make it necessary to the requested comparison. Otherwise the benchmark silently grades an obligation the user never requested, and the selector has no principled reason to retrieve that document.
+
+When this defect is found, prefer correcting the question/benchmark semantics over adding metadata that artificially forces the hidden gold document into the plan.
+
 ## Metadata anti-patterns
 
 Avoid these patterns:
@@ -217,9 +339,12 @@ For every new document:
 4. Write a description containing WHAT + WHEN and, where useful, one discriminating boundary.
 5. Check that routing identifiers supplied by users are present when they are necessary for activation.
 6. Remove answer facts that would let a user answer the benchmark without opening the body.
-7. Run `python scripts/validate_corpus.py`.
-8. Run the selection-only diagnostic before the end-to-end benchmark.
-9. Inspect every repeated selection error as a metadata-design problem first, not as a reason to add orchestration.
+7. Check the direction of lookup: verify that the description supports the realistic `known entity -> requested property` direction, not only the inverse relation.
+8. Check every routing anchor against the whole eval set so a safe query-known value in one case does not leak a hidden answer in another.
+9. For documents that discuss the same entity at different interpretive stages, state which document owns the original record, reassessment, or synthesized property.
+10. Run `python scripts/validate_corpus.py`.
+11. Run the selection-only diagnostic before the end-to-end benchmark.
+12. Inspect every repeated selection error as a metadata-design problem first, not as a reason to add orchestration.
 
 ## Evaluation standard
 
@@ -272,6 +397,9 @@ Before accepting a metadata description, verify:
 - [ ] It is clearly distinguishable from its closest sibling documents.
 - [ ] It uses stable user/domain vocabulary rather than generic answer-field words.
 - [ ] It states an important base/exception/override boundary when that boundary affects discovery.
+- [ ] It describes the lookup direction users actually ask for (`known entity -> requested property`) when direction matters.
+- [ ] If sibling documents describe different interpretive stages, it states which stage/fact this document owns.
+- [ ] Every exposed anchor has been checked against the whole eval set for answer leakage.
 - [ ] It contains no hidden team/code/threshold/duration/queue answer fact.
 - [ ] It stays short enough to be useful as always-visible routing context.
 
@@ -293,3 +421,58 @@ This is still routing metadata. It names *which kinds of evidence must be combin
 A regional document may repeat a tier name while also setting a lower ceiling. That does not necessarily make the product-assignment and quota policies irrelevant when the question asks for the complete effective-decision chain. Metadata should make the dependency explicit when those premises materially justify the result.
 
 Conversely, do not force a derivation document when the user already supplies the derived fact. If the question says `already classified Lattice-3`, metadata should route directly to consumers of Lattice-3 rather than reopening severity classification merely because it can derive the same level.
+
+## Release rule: keep corpus content and evaluator gold physically separate
+
+A distributable corpus must not contain its evaluation questions, required-document labels, expected answers, or other benchmark gold anywhere beneath the corpus directory. Even when the runtime loader happens to ignore those files, colocating them makes leakage audits harder and makes the public artifact look unsafe.
+
+Use a repository layout like:
+
+```text
+corpus/
+  tell-aster/
+    ...document bodies only...
+
+datasets/
+  tell-aster-eval-v1.yaml   # historical benchmark
+  tell-aster-eval-v2.yaml   # current release benchmark
+```
+
+The corpus registry may point from a corpus name to its default external dataset, but the dataset must not be part of the corpus tree.
+
+## Make multi-document gold indispensable to the user question
+
+A unique phrase in each required document is not sufficient to prove that the document is semantically indispensable. V17 exposed several cases where a downstream specialist document repeated enough of the bridge to answer correctly without opening the nominal bridge document.
+
+For release benchmarks, prefer this stronger rule:
+
+> Every required document should contribute an explicitly requested output, or a relationship that cannot already be established from the question or another selected document.
+
+When a bridge document is repeatedly unnecessary, do **not** tune metadata to force retrieval of it. Rewrite the evaluation question so that the bridge contributes a real requested fact, reclassify the case, or remove the redundant document from the gold set.
+
+Examples of stronger question design:
+
+- weak: "What crop was stored in the bin that survives to 1.34 m?" when the botanical report already names the bin;
+- stronger: "What maximum height is recorded for Bin Bn-6, and which crop dominated its fill?" — architecture owns the height and botany owns the crop;
+- weak: "Which source matches the limestone of IW-5?" when the geology report already states the entire mapping;
+- stronger: "Which architectural reference sample does IW-5 match, and which geological source matches that sample?" — each document contributes a requested result.
+
+Keep historical benchmark versions immutable for reproducibility. Put corrected release semantics in a new dataset version rather than silently rewriting the old benchmark.
+
+## Use metadata as the first disclosure layer
+
+Anthropic's Agent Skills guidance describes name/description metadata as the first level of progressive disclosure: enough information to decide *when* to load the deeper body. OpenAI's harness guidance similarly recommends a compact map rather than a large always-visible manual.
+
+For corpus metadata this means:
+
+- describe **fact ownership**, not merely topic;
+- include safe entity anchors when the entity is already known in the question;
+- state important source-role boundaries such as original record vs later reassessment;
+- state predictable combination rules when another source type owns a requested property;
+- never place hidden answer values in activation metadata merely to improve routing.
+
+Official references:
+
+- https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
+- https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+- https://openai.com/index/harness-engineering/

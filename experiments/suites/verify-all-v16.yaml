@@ -1,0 +1,6 @@
+name: verify-all-v16
+configs:
+  - experiments/v16/verify-single-v1.yaml
+  - experiments/v16/verify-multi-v2.yaml
+  - experiments/v16/tell-aster/verify-single-v1.yaml
+  - experiments/v16/tell-aster/verify-multi-v1.yaml

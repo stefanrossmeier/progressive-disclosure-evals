@@ -47,10 +47,13 @@ def main() -> int:
     plan = BenchmarkPlan(
         name=plan.name,
         dataset=plan.dataset,
+        corpus_name=plan.corpus_name,
+        corpus_root=plan.corpus_root,
         runs_per_case=args.runs if args.runs is not None else plan.runs_per_case,
         max_documents=(
             args.max_documents if args.max_documents is not None else plan.max_documents
         ),
+        max_selection_rounds=plan.max_selection_rounds,
         prompts=tuple(Path(x) for x in args.prompt) if args.prompt else plan.prompts,
         models=tuple(args.model) if args.model else plan.models,
         case_ids=plan.case_ids,
@@ -74,6 +77,7 @@ def main() -> int:
     if args.dry_run:
         print(f"experiment: {plan.name}")
         print(f"dataset: {dataset['name']} v{dataset['version']}")
+        print(f"corpus: {plan.corpus_name} ({plan.corpus_root})")
         print(f"cases: {len(selected)}")
         print(f"models: {len(plan.models)} ({', '.join(plan.models)})")
         print(f"prompts: {len(plan.prompts)}")
@@ -81,13 +85,15 @@ def main() -> int:
             artifact = load_prompt_artifact(prompt_path)
             print(f"  - {artifact.id}@v{artifact.version}: {prompt_path}")
         print(f"runs per case: {plan.runs_per_case}")
+        print(f"max selection rounds: {plan.max_selection_rounds}")
         if plan.case_tags:
             print(f"config case tags: {', '.join(plan.case_tags)}")
         if plan.case_ids:
             print(f"config case ids: {', '.join(plan.case_ids)}")
         print(f"case trials: {trial_count}")
-        print(f"model calls (nominal): {trial_count * 2} minimum, {trial_count * 4} maximum")
-        print(f"model calls (including one protocol retry per stage): up to {trial_count * 8}")
+        nominal_max = trial_count * (2 * plan.max_selection_rounds)
+        print(f"model calls (nominal): {trial_count * 2} minimum, {nominal_max} maximum")
+        print(f"model calls (including one protocol retry per stage): up to {nominal_max * 2}")
         return 0
 
     output_dir = args.output or default_output_dir(plan.name)

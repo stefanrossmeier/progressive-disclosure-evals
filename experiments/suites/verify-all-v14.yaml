@@ -1,0 +1,6 @@
+name: verify-all-v14
+configs:
+  - experiments/verify-single-v1.yaml
+  - experiments/verify-multi-v2.yaml
+  - experiments/tell-aster/verify-single-v1.yaml
+  - experiments/tell-aster/verify-multi-v1.yaml

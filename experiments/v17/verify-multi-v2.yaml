@@ -1,0 +1,10 @@
+# Complete-plan multi-document development verification. Unlike eval-v1's historical
+# chain cases, every required document here contributes a distinct requested fact.
+name: verify-multi-dev-v2-v17
+dataset: datasets/multi-dev-v2.yaml
+runs_per_case: 2
+max_documents: 4
+prompts:
+  - prompts/agent/system-v17.md
+models:
+  - env:OPENAI_MODEL

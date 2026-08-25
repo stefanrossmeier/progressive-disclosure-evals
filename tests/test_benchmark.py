@@ -149,3 +149,13 @@ def test_cli_case_filter_can_only_narrow_configured_subset():
     case_ids, tags = resolve_case_filters(plan, case_ids={"EVAL-001"}, tags={"commercial"})
     assert case_ids == {"EVAL-001"}
     assert tags == {"single_doc", "commercial"}
+
+
+def test_v18_allows_two_bounded_recoveries_while_v17_keeps_historical_default(monkeypatch):
+    monkeypatch.setenv("OPENAI_MODEL", "test-model")
+    v18 = load_plan("experiments/v18/tell-aster/eval-single-v1.yaml")
+    v17 = load_plan("experiments/v17/tell-aster/eval-single-v1.yaml")
+    assert v18.max_selection_rounds == 3
+    assert v17.max_selection_rounds == 2
+    assert v18.dataset == Path("datasets/tell-aster-eval-v2.yaml")
+    assert v17.dataset == Path("datasets/tell-aster-eval-v1.yaml")

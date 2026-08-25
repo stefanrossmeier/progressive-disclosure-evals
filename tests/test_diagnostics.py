@@ -21,8 +21,6 @@ def test_selection_only_reports_top1_and_recall():
             "c1",
             "select_documents",
             {
-                "active_qualifiers": ["MIG-2"],
-                "excluded_qualifiers": [],
                 "evidence_plan": [
                     {"need": "MIG-2 approval authority", "document_id": "commercial.billing.credits.migration"}
                 ],
@@ -34,8 +32,6 @@ def test_selection_only_reports_top1_and_recall():
     assert result["top1_hit"] is True
     assert result["success"] is True
     assert result["selected_document_ids"] == ["commercial.billing.credits.migration"]
-    assert result["active_qualifiers"] == ["MIG-2"]
-    assert result["excluded_qualifiers"] == []
     assert result["evidence_plan"][0]["document_id"] == "commercial.billing.credits.migration"
 
 
@@ -74,8 +70,6 @@ def test_multi_selection_success_requires_complete_initial_plan_not_only_gold_to
             "c1",
             "select_documents",
             {
-                "active_qualifiers": ["US", "Nova"],
-                "excluded_qualifiers": [],
                 "evidence_plan": [
                     {"need": "product assignment", "document_id": "platform.products.nova.limits"}
                 ],

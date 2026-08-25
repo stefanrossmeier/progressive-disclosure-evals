@@ -12,6 +12,7 @@ from typing import Any, Iterable
 import yaml
 
 from evals.agent_dev import evaluate_case, result_to_dict
+from progressive_disclosure.corpora import corpus_name_from_dataset, get_corpus_spec
 from progressive_disclosure.config import (
     get_openai_model,
     get_openai_reasoning_effort,
@@ -30,8 +31,11 @@ class BenchmarkPlan:
     max_documents: int
     prompts: tuple[Path, ...]
     models: tuple[str, ...]
+    max_selection_rounds: int = 2
     case_ids: tuple[str, ...] = ()
     case_tags: tuple[str, ...] = ()
+    corpus_name: str = "northstar"
+    corpus_root: Path = Path("corpus/northstar-corpus")
 
 
 def load_eval_dataset(path: Path | str = "datasets/eval-v1.yaml") -> dict[str, Any]:
@@ -80,16 +84,28 @@ def load_plan(path: Path | str = "experiments/eval-v1.yaml") -> BenchmarkPlan:
 
     runs = int(data.get("runs_per_case", 1))
     max_documents = int(data.get("max_documents", 4))
+    max_selection_rounds = int(data.get("max_selection_rounds", 2))
     if runs < 1:
         raise ValueError("runs_per_case must be >= 1")
     if max_documents < 1:
         raise ValueError("max_documents must be >= 1")
+    if max_selection_rounds < 1:
+        raise ValueError("max_selection_rounds must be >= 1")
+
+    dataset_path = Path(data.get("dataset", "datasets/eval-v1.yaml"))
+    dataset = load_eval_dataset(dataset_path)
+    corpus_name = str(data.get("corpus") or corpus_name_from_dataset(dataset))
+    corpus_spec = get_corpus_spec(corpus_name)
+    corpus_root = Path(data.get("corpus_root") or corpus_spec.root)
 
     return BenchmarkPlan(
         name=str(data.get("name") or config_path.stem),
-        dataset=Path(data.get("dataset", "datasets/eval-v1.yaml")),
+        dataset=dataset_path,
+        corpus_name=corpus_name,
+        corpus_root=corpus_root,
         runs_per_case=runs,
         max_documents=max_documents,
+        max_selection_rounds=max_selection_rounds,
         prompts=tuple(Path(x) for x in prompts),
         models=tuple(_resolve_model(x) for x in models),
         case_ids=tuple(dict.fromkeys(x.strip() for x in case_ids)),
@@ -146,7 +162,7 @@ def _sha256_file(path: Path | str) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def _corpus_sha256(root: Path | str = "corpus/northstar") -> str:
+def _corpus_sha256(root: Path | str) -> str:
     root_path = Path(root)
     digest = hashlib.sha256()
     for path in sorted(root_path.rglob("*.md")):
@@ -199,15 +215,18 @@ def run_benchmark(
 
     prompt_artifacts = [(path, load_prompt_artifact(path)) for path in plan.prompts]
     dataset_sha256 = _sha256_file(plan.dataset)
-    corpus_sha256 = _corpus_sha256()
+    corpus_sha256 = _corpus_sha256(plan.corpus_root)
     manifest = {
         "schema_version": 1,
         "experiment_name": plan.name,
         "dataset": str(plan.dataset),
         "dataset_name": dataset["name"],
         "dataset_version": dataset["version"],
+        "corpus_name": plan.corpus_name,
+        "corpus_root": str(plan.corpus_root),
         "runs_per_case": plan.runs_per_case,
         "max_documents": plan.max_documents,
+        "max_selection_rounds": plan.max_selection_rounds,
         "prompts": [str(x) for x in plan.prompts],
         "prompt_artifacts": [
             {
@@ -251,6 +270,8 @@ def run_benchmark(
                             "experiment_name": plan.name,
                             "dataset_name": dataset["name"],
                             "dataset_version": dataset["version"],
+                            "corpus_name": plan.corpus_name,
+                            "corpus_root": str(plan.corpus_root),
                             "repeat_index": repeat_index,
                             "case_id": case["id"],
                             "case_title": case.get("title", ""),
@@ -272,7 +293,9 @@ def run_benchmark(
                             result = evaluate_case(
                                 case,
                                 backend=backend,
+                                corpus_root=plan.corpus_root,
                                 max_documents=plan.max_documents,
+                                max_selection_rounds=plan.max_selection_rounds,
                                 prompt=prompt,
                             )
                             record = {

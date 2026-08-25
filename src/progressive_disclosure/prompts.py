@@ -9,7 +9,7 @@ import yaml
 from .models import DocumentSummary, KnowledgeDocument
 
 
-DEFAULT_AGENT_PROMPT_PATH = Path("prompts/agent/system-v14.md")
+DEFAULT_AGENT_PROMPT_PATH = Path("prompts/agent/system-v18.md")
 
 
 @dataclass(frozen=True)
@@ -79,6 +79,7 @@ def build_selection_state(
     catalog: tuple[DocumentSummary, ...],
     already_opened: tuple[str, ...] = (),
     missing_information: str | None = None,
+    discovered_references: tuple[str, ...] = (),
 ) -> str:
     lines = [
         "QUESTION",
@@ -93,22 +94,32 @@ def build_selection_state(
         lines.extend(["", "ALREADY DISCLOSED DOCUMENTS", ", ".join(already_opened)])
     if missing_information:
         lines.extend(["", "UNRESOLVED EVIDENCE NEED", missing_information.strip()])
+    if discovered_references:
+        lines.extend([
+            "",
+            "REFERENCES OBSERVED IN DISCLOSED BODIES (routing hints only; not factual evidence)",
+            ", ".join(discovered_references),
+            "Use these only as navigation hints when their metadata matches the unresolved need; do not follow them merely because they were linked.",
+        ])
 
     lines.extend(
         [
             "",
-            "Before selecting: preserve all explicit scope qualifiers and exclusions; a negative qualifier "
-            "excludes only that branch and never creates an obligation to prove the excluded branch. Treat "
-            "region, product, marker, level, and other facts stated by the question as given case facts unless "
-            "the question explicitly asks you to determine them. Decompose every requested output into an "
-            "atomic evidence obligation and map each obligation to the body expected to establish it. Select "
-            "all currently predictable necessary bodies in this first plan so the evidence stage can answer in "
-            "one pass when possible. For dependency chains include each body that contributes a requested fact "
-            "or transformation. For precedence/fallback include both authorities when both are needed to explain "
-            "the result. Preserve contrasts such as default/normal/base versus regional/effective/lower/actual as "
-            "separate outputs; do not collapse them. Do not load a body merely to re-derive a fact already given "
-            "by the question or solely to confirm that an excluded scope does not apply. Select the smallest "
-            "complete proof set and make its best routing match primary.",
+            "Before selecting: preserve explicit identifiers, names, locations, time references, qualifiers, and "
+            "exclusions inside the atomic obligation they modify. Never flatten clause-local scope into global "
+            "qualifiers. Treat `non-X` as excluding X and `without X` as asking for that obligation with X absent, "
+            "even when X applies elsewhere in the case. Treat contrast words such as `instead`, `whereas`, and "
+            "`rather than` as branch boundaries. Treat facts "
+            "already supplied by the question as case facts unless the question asks you to determine them. Split "
+            "the requested output into independent atomic evidence obligations and map each obligation to the "
+            "metadata entry expected to establish it. Prefer explicit entity anchors in metadata over assumptions "
+            "about which document family should contain a fact. For relational questions include every predictable "
+            "indispensable bridge needed to connect an identified entity to the requested property. For compound "
+            "questions, make each obligation self-contained and preserve the wording, negation, counterfactual "
+            "condition, and local qualifiers of the clause that created it; do not import an identifier, process, "
+            "scope, modifier, or qualifier from another independent clause. Do not "
+            "select documents merely for corroboration, background, or "
+            "topical similarity. Treat metadata phrases such as `combine with`, `consult`, `use ... before`, or explicit ownership boundaries as routing dependencies when they match a requested output. Select the smallest complete proof set and make its best routing match primary.",
         ]
     )
     return "\n".join(lines)
@@ -124,7 +135,7 @@ def build_evidence_state(
     if evidence_plan:
         lines.extend(["", "EVIDENCE OBLIGATIONS FROM ROUTING PLAN (not factual evidence)"])
         for need, document_id in evidence_plan:
-            lines.append(f"- {need} -> {document_id}")
+            lines.append(f"- {need}")
     lines.extend(["", "DISCLOSED DOCUMENT EVIDENCE"])
     for document in opened_documents:
         lines.extend(
@@ -139,13 +150,16 @@ def build_evidence_state(
         [
             "",
             "Audit every planned evidence obligation and every requested output against the disclosed bodies. "
-            "Treat facts explicitly supplied by the question as given inputs rather than evidence gaps. Preserve "
-            "requested contrasts: if the question asks for both a default/normal/base value and a regional/effective "
-            "value, report both from their respective authorities rather than substituting the effective value for "
-            "the default. If every planned obligation is established, call submit_answer and put the actual complete "
-            "non-empty user-facing answer in its answer field; do not request another document to reconfirm scope, "
-            "absence of an excluded rule, or an already established premise. If one concrete planned obligation is "
-            "unsupported, call request_more_evidence with one precise non-empty missing evidence need.",
+            "Treat facts explicitly supplied by the question as given inputs rather than evidence gaps, and keep "
+            "qualifiers attached to the atomic obligation they modify. Resolve obligations independently before "
+            "composing the final answer: a rule applicable to one branch must not overwrite a separately requested "
+            "base, default, ordinary, excluded, or counterfactual branch. Use disclosed bodies to establish requested "
+            "facts and indispensable relationships; do not add background or corroboration requirements after the "
+            "fact. Document IDs, titles, and routing-plan mappings are source labels rather than factual answer "
+            "values; never substitute one for a requested fact unless the question explicitly asks for that source "
+            "identifier. If every planned obligation is established, call submit_answer and put the actual complete "
+            "non-empty user-facing answer in its answer field. If one concrete planned obligation is unsupported, "
+            "call request_more_evidence with one precise non-empty missing evidence need.",
         ]
     )
     return "\n".join(lines)

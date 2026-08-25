@@ -20,8 +20,6 @@ def select(i, primary, additional=()):
             f"c{i}",
             "select_documents",
             {
-                "active_qualifiers": ["subject"],
-                "excluded_qualifiers": [],
                 "evidence_plan": [
                     {"need": f"need-{index}", "document_id": document_id}
                     for index, document_id in enumerate([primary, *additional], start=1)
@@ -66,7 +64,7 @@ def test_ideal_single_document_eval_succeeds_in_two_calls():
     assert result.discovery.required_document_recall == 1.0
     assert result.discovery.document_precision == 1.0
     assert result.model_turns == result.eval_criteria.ideal_model_calls == 2
-    assert result.prompt_version == 14
+    assert result.prompt_version == 18
     assert result.failure_classification == "success"
 
 
@@ -151,6 +149,9 @@ def test_eval_labels_and_expected_values_are_not_exposed_to_agent():
         "question": "What applies to MIG-2?",
         "expected_contains": ["__EXPECTED_VALUE_SENTINEL__"],
         "required_documents": ["commercial.billing.credits.migration"],
+        "required_evidence": {
+            "commercial.billing.credits.migration": ["__REQUIRED_EVIDENCE_SENTINEL__"],
+        },
     }
     backend = ScriptedBackend([
         select(1, "commercial.billing.credits.migration"),
@@ -165,6 +166,7 @@ def test_eval_labels_and_expected_values_are_not_exposed_to_agent():
     assert "__EVAL_TITLE_SENTINEL__" not in combined
     assert "__EVAL_TAG_SENTINEL__" not in combined
     assert "__EXPECTED_VALUE_SENTINEL__" not in combined
+    assert "__REQUIRED_EVIDENCE_SENTINEL__" not in combined
     assert "single_doc" not in combined
 
 
@@ -182,5 +184,19 @@ def test_compact_utc_range_matches_individual_expected_timestamps():
             "The standard window is Thursday 04:23–05:36 UTC.",
             ["operations.maintenance.scheduled.windows"],
         ),
+    ]))
+    assert result.answer_contains_expected is True
+
+
+def test_percent_word_and_symbol_are_equivalent_for_answer_matching():
+    case = {
+        "id": "TEST-PERCENT",
+        "question": "What proportion applies?",
+        "expected_contains": ["38 percent"],
+        "required_documents": ["commercial.billing.credits.migration"],
+    }
+    result = evaluate_case(case, backend=ScriptedBackend([
+        select(1, "commercial.billing.credits.migration"),
+        submit(2, "The proportion is 38%.", ["commercial.billing.credits.migration"]),
     ]))
     assert result.answer_contains_expected is True

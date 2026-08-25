@@ -1,7 +1,7 @@
 {
   "generator": "gpt-5.6-sol",
   "api": "chatgpt.com",
-  "date": "2026-08-23",
+  "date": "2026-08-24",
   "temperature": "default",
-  "prompt": "prompts/generate-corpus.md"
+  "prompt": "prompts/generate-corpus-archology.prompt.md"
 }

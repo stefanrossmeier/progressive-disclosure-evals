@@ -1,0 +1,21 @@
+name: tell-aster-verify-v1-v14-multi
+dataset: datasets/tell-aster-eval-v1.yaml
+case_tags:
+  - multi_doc
+case_ids:
+  - TA-M-001
+  - TA-M-002
+  - TA-M-005
+  - TA-M-009
+  - TA-M-016
+  - TA-M-019
+  - TA-M-023
+  - TA-M-029
+  - TA-M-033
+  - TA-M-040
+runs_per_case: 2
+max_documents: 4
+prompts:
+  - prompts/agent/system-v14.md
+models:
+  - env:OPENAI_MODEL

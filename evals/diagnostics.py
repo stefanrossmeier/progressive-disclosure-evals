@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-import re
 from pathlib import Path
 from typing import Any
 
 from progressive_disclosure.knowledge import KnowledgeBase
+
+from evals.grading import answer_matches_expected
 from progressive_disclosure.llm import ModelBackend
 from progressive_disclosure.prompts import PromptArtifact, build_evidence_state, build_selection_state
 from progressive_disclosure.tools import (
@@ -14,22 +15,12 @@ from progressive_disclosure.tools import (
 )
 
 
-def _normalize(value: str) -> str:
-    folded = value.casefold().replace("–", "-").replace("—", "-")
-    folded = re.sub(
-        r"\b(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*utc\b",
-        r"\1 utc - \2 utc",
-        folded,
-    )
-    return re.sub(r"(?<=\d),(?=\d{3}\b)", "", folded)
-
-
 def evaluate_selection_only(
     case: dict[str, Any],
     *,
     backend: ModelBackend,
     prompt: PromptArtifact,
-    corpus_root: Path | str = "corpus/northstar",
+    corpus_root: Path | str = "corpus/northstar-corpus",
     max_documents: int = 4,
 ) -> dict[str, Any]:
     knowledge = KnowledgeBase(corpus_root)
@@ -58,8 +49,6 @@ def evaluate_selection_only(
         return {**record, "valid_action": False, "success": False}
 
     args = turn.tool_calls[0].arguments
-    active = args.get("active_qualifiers")
-    excluded = args.get("excluded_qualifiers")
     raw_plan = args.get("evidence_plan")
     primary = args.get("primary_document_id")
     available = set(knowledge.document_ids)
@@ -79,11 +68,7 @@ def evaluate_selection_only(
             plan.append({"need": item["need"].strip(), "document_id": item["document_id"]})
     plan_ids = [item["document_id"] for item in plan]
     if (
-        not isinstance(active, list)
-        or any(not isinstance(x, str) for x in active)
-        or not isinstance(excluded, list)
-        or any(not isinstance(x, str) for x in excluded)
-        or not plan_ok
+        not plan_ok
         or not isinstance(primary, str)
         or primary not in available
         or primary not in set(plan_ids)
@@ -100,8 +85,6 @@ def evaluate_selection_only(
     return {
         **record,
         "valid_action": True,
-        "active_qualifiers": active,
-        "excluded_qualifiers": excluded,
         "evidence_plan": plan,
         "primary_document_id": primary,
         "selected_document_ids": selected,
@@ -120,7 +103,7 @@ def evaluate_oracle_answer(
     *,
     backend: ModelBackend,
     prompt: PromptArtifact,
-    corpus_root: Path | str = "corpus/northstar",
+    corpus_root: Path | str = "corpus/northstar-corpus",
 ) -> dict[str, Any]:
     knowledge = KnowledgeBase(corpus_root)
     required = tuple(case.get("required_documents", []))
@@ -153,7 +136,7 @@ def evaluate_oracle_answer(
         return {**record, "valid_action": False, "success": False}
 
     expected = [str(x) for x in case.get("expected_contains", [])]
-    answer_ok = all(_normalize(x) in _normalize(answer) for x in expected)
+    answer_ok = answer_matches_expected(answer, expected, question=case["question"])
     # Oracle diagnostics disclose exactly the evaluator-provided gold bodies. Attribution is therefore
     # deterministic once the model submits an answer; this diagnostic isolates answer synthesis rather
     # than asking the model to redundantly reproduce the gold source list.

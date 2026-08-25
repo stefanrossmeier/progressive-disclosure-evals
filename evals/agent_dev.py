@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from pathlib import Path
-import re
 from typing import Any
 
 import yaml
@@ -11,6 +10,8 @@ from progressive_disclosure.agent import ProgressiveDisclosureAgent
 from progressive_disclosure.knowledge import KnowledgeBase
 from progressive_disclosure.llm import ModelBackend
 from progressive_disclosure.prompts import PromptArtifact
+
+from evals.grading import answer_matches_expected
 
 
 @dataclass(frozen=True)
@@ -85,8 +86,8 @@ def _criteria(case: dict[str, Any]) -> EvalCriteria:
         ideal_model_calls=2,
         gold_visible_to_agent=False,
         answer_rule=(
-            "Every expected_answer_value must appear in the submitted answer "
-            "(case-insensitive)."
+            "Every expected_answer_value must match the submitted answer under deterministic "
+            "surface normalization; explicit how-many questions accept the requested count alone."
         ),
         discovery_rule=(
             "All required_documents must be read. Gold documents are evaluator-only; "
@@ -142,8 +143,6 @@ def _read_trace(events) -> list[dict[str, Any]]:
                     "turn": event.turn,
                     "action": "select_documents",
                     "selection_round": event.data["selection_round"],
-                    "active_qualifiers": event.data.get("active_qualifiers", []),
-                    "excluded_qualifiers": event.data.get("excluded_qualifiers", []),
                     "evidence_plan": event.data.get("evidence_plan", []),
                     "primary_document_id": event.data["primary_document_id"],
                     "selected_document_ids": event.data["selected_document_ids"],
@@ -246,33 +245,22 @@ def evaluate_case(
     case: dict[str, Any],
     *,
     backend: ModelBackend,
-    corpus_root: Path | str = "corpus/northstar",
+    corpus_root: Path | str = "corpus/northstar-corpus",
     max_documents: int = 4,
+    max_selection_rounds: int = 2,
     prompt: PromptArtifact | None = None,
 ) -> DevCaseResult:
     knowledge = KnowledgeBase(corpus_root)
     agent = ProgressiveDisclosureAgent(
         backend,
         max_documents=max_documents,
+        max_selection_rounds=max_selection_rounds,
         prompt=prompt,
     )
     result = agent.run(case["question"], knowledge)
 
     expected = tuple(str(value) for value in case.get("expected_contains", []))
-
-    def normalize_match_text(value: str) -> str:
-        folded = value.casefold().replace("–", "-").replace("—", "-")
-        # Expand compact UTC ranges so expected start/end timestamps can each match.
-        folded = re.sub(
-            r"\b(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*utc\b",
-            r"\1 utc - \2 utc",
-            folded,
-        )
-        # Allow models to omit thousands separators while preserving codes/hyphens.
-        return re.sub(r"(?<=\d),(?=\d{3}\b)", "", folded)
-
-    answer_folded = normalize_match_text(result.answer)
-    answer_ok = all(normalize_match_text(value) in answer_folded for value in expected)
+    answer_ok = answer_matches_expected(result.answer, expected, question=case["question"])
     required_documents = set(case.get("required_documents", []))
     discovery = _discovery_metrics(result.opened_document_ids, required_documents)
     required_sources_cited = required_documents.issubset(set(result.cited_sources))

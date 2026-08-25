@@ -2,30 +2,35 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Progressive Disclosure Eval Dataset",
   "type": "object",
-  "required": ["name", "version", "cases"],
+  "required": ["name", "version", "corpus", "cases"],
   "properties": {
     "name": {"type": "string", "minLength": 1},
     "version": {"type": "integer", "minimum": 1},
+    "profile": {"type": "string", "enum": ["benchmark", "development"]},
+    "corpus": {"type": "string", "minLength": 1},
     "description": {"type": "string"},
+    "require_indispensable_expected_contribution": {"type": "boolean"},
+    "check_global_metadata_leakage": {"type": "boolean"},
     "cases": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "title", "question", "expected_contains", "required_documents", "tags"],
+        "required": ["id", "question", "expected_contains", "required_documents", "tags"],
         "additionalProperties": false,
         "properties": {
-          "id": {"type": "string", "pattern": "^EVAL-[0-9]{3}$"},
+          "id": {"type": "string", "minLength": 1},
           "title": {"type": "string", "minLength": 1},
           "question": {"type": "string", "minLength": 1},
           "expected_contains": {
             "type": "array",
             "minItems": 1,
-            "items": {"type": ["string", "number"]}
+            "items": {"type": "string", "minLength": 1}
           },
           "required_documents": {
             "type": "array",
             "minItems": 1,
+            "maxItems": 4,
             "uniqueItems": true,
             "items": {"type": "string", "minLength": 1}
           },
@@ -34,6 +39,15 @@
             "minItems": 1,
             "uniqueItems": true,
             "items": {"type": "string", "minLength": 1}
+          },
+          "required_evidence": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"type": "string", "minLength": 1}
+            }
           }
         }
       }

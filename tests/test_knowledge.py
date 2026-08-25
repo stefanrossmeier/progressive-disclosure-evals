@@ -5,7 +5,7 @@ import pytest
 from progressive_disclosure.knowledge import InvalidCorpusError, KnowledgeBase, UnknownDocumentError
 
 
-CORPUS = Path("corpus/northstar")
+CORPUS = Path("corpus/northstar-corpus")
 
 
 def test_catalog_contains_all_40_documents():
@@ -45,15 +45,22 @@ def test_missing_corpus_fails(tmp_path):
         KnowledgeBase(tmp_path / "missing")
 
 
-def test_path_derived_id_is_enforced(tmp_path):
+def test_document_ids_are_metadata_not_path_conventions(tmp_path):
     path = tmp_path / "a" / "b"
     path.mkdir(parents=True)
     (path / "c.md").write_text(
-        "---\nid: wrong.id\ntitle: T\ndescription: D\nversion: 1\n---\nbody\n",
+        "---\nid: stable-external-id\ntitle: T\ndescription: D\n---\nbody\n",
         encoding="utf-8",
     )
-    with pytest.raises(InvalidCorpusError, match="path-derived"):
-        KnowledgeBase(tmp_path)
+    kb = KnowledgeBase(tmp_path)
+    assert kb.document_ids == ("stable-external-id",)
+
+
+def test_tell_aster_catalog_loads_with_non_path_ids_and_optional_versions():
+    kb = KnowledgeBase("corpus/tell-aster")
+    assert len(kb.document_ids) == 80
+    assert "TA-EXC-01" in kb
+    assert "14 cm" in kb.read("TA-EXC-01").content
 
 
 def test_context_size_metrics_are_positive():

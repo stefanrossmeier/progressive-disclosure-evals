@@ -1,124 +1,172 @@
 # Progressive Disclosure Evals
 
-An eval-first experiment for measuring whether an LLM can discover the knowledge it actually needs without loading an entire knowledge base.
+An eval-first implementation of **progressive disclosure for LLM knowledge retrieval**.
 
-The current V14 runtime uses a complete-plan metadata-first progressive-disclosure pipeline:
+Instead of placing an entire knowledge base into the model context—or retrieving chunks with embeddings—the runtime first exposes a compact metadata map of the available documents. The model plans the evidence it needs, only those document bodies are disclosed, and the answer is grounded in the disclosed evidence.
 
 ```text
-all document id/title/activation-description metadata
-                    ↓
-        atomic evidence plan (need -> document)
-                    ↓
-          disclose the distinct planned bodies
-                    ↓
-       submit_answer / request_more_evidence
-             ↙               ↘
-          answer       one precise missing fact
-                              ↓
-                 one bounded recovery selection
+question + compact document metadata
+                ↓
+      atomic evidence plan
+                ↓
+   selected document bodies
+                ↓
+            answer
+                ↓
+ bounded recovery when evidence is still missing
 ```
 
-The normal path is two model calls for both single- and multi-document questions. The runtime is never told how many documents a case requires.
+The project asks a deliberately simple question:
 
-The corpus contains fictional, non-guessable Northstar Systems facts so correct answers can be tied to disclosed evidence rather than model priors.
+> **How far can a small, well-engineered progressive-disclosure system go without embeddings, a vector database, rerankers, or graph retrieval?**
 
-## Why V14
+## Current result
 
-V9-V11 established that activation-oriented metadata plus explicit selection is highly effective for this corpus. V11's difficult single-document smoke reached 24/24 end-to-end, and the full historical multi-document validation reached 95% discovery / 95% answer accuracy, although strict E2E was reduced by attribution and evaluator-chain issues.
+The latest complete benchmark is **V18 on `gpt-5-nano`**, with **180 single- and multi-document trials across two unrelated synthetic knowledge bases**.
 
-V12 tested a more adaptive design: select 1-2 bodies, regenerate a structured evidence ledger, then route again from the remaining gap. That experiment regressed badly with `gpt-5-nano`: the hard single verification fell to 83.3% E2E and the genuine multi-document development verification to 25% E2E. Raw traces showed that model-authored ledger state was non-monotonic—facts supported in one round became missing in later rounds—and the nested evidence schema caused protocol failures after correct retrieval. V13 therefore returns to a simpler, more reliable mechanism: plan the smallest complete proof set from activation metadata, disclose those bodies once, and use one simple evidence-resolution call. Recovery remains available only for a concrete missing obligation.
+| Benchmark | Trials | Strict E2E | Answer accuracy | Complete discovery | Mean bodies read |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Northstar — single document | 40 | **100%** | 100% | 100% | 1.40 |
+| Northstar — multi document | 20 | **90%** | 100% | 90% | 2.60 |
+| Tell Aster — single document | 80 | **95%** | 96.3% | 95% | 1.28 |
+| Tell Aster — multi document | 40 | **95%** | 95% | 95% | 2.30 |
+| **Overall** | **180** | **95.6%** | **97.2%** | **95.6%** | **1.68** |
 
-V13 then restored complete-plan reliability: the focused `multi-dev-v2` selection diagnostic reached 30/30 top-1 and 30/30 complete initial plans, the hard single-document verification reached 24/24 E2E, and the genuine multi-document verification reached 20/20 discovery/top-1. Its five remaining multi-document failures all occurred after complete discovery because `resolve_evidence` chose answer mode but emitted an empty answer twice. V14 therefore preserves V13 retrieval unchanged and simplifies the evidence-stage interface into two explicit actions: `submit_answer(answer)` or `request_more_evidence(missing_information)`. The stateless retry now also receives the exact protocol defect instead of replaying the same request unchanged.
+Across the complete run:
 
-V13 also fixed two evaluation problems exposed by V12: multi selection diagnostics require complete initial-plan recall rather than merely a gold top-1 document, and `multi-dev-v2` numeric expectations are represented correctly as strings. See:
+- **100% completion** — 180/180 trials completed without runtime errors.
+- **95.6% strict end-to-end success**.
+- **97.2% answer accuracy**.
+- **95.6% complete evidence discovery and attribution**.
+- **92.2% first-read hit rate**.
+- **86.9% mean document precision**.
+- **1.68 document bodies read on average**, with **p95 = 3**.
+- **2.16 model calls per trial on average**.
+- Only **2.9% of corpus body content** was loaded on average.
 
-- `docs/v7-audit-2026-08-23.md`
-- `docs/how-to-corpus-metadata.md`
-- `docs/v10-single-validation-learning-2026-08-23.md`
-- `docs/v11-multi-validation-learning-2026-08-23.md`
-- `docs/v12-validation-learning-2026-08-24.md`
-- `docs/v13-validation-learning-2026-08-24.md`
-- `docs/multi-document-progressive-disclosure.md`
+Strict E2E is intentionally stronger than answer accuracy: a trial passes only when the answer is correct **and** every benchmark-required evidence document is discovered and attributed.
 
-## Local setup
+The result is especially useful because the two corpora have very different information structures. Northstar is an enterprise/policy knowledge base; Tell Aster is an archaeological research archive. Tell Aster's evaluation data is kept outside the corpus so evaluator gold is never part of the runtime knowledge base.
+
+## Why progressive disclosure?
+
+LLM context is finite. More context is not automatically better context.
+
+The architecture therefore separates the knowledge base into two layers:
+
+1. **Always-visible metadata** — document identity, description, activation hints, and other compact routing information.
+2. **On-demand bodies** — detailed content disclosed only after the model identifies an evidence need.
+
+If disclosed evidence reveals a useful cross-reference but a fact is still missing, the runtime can use that discovery as a compact hint for bounded recovery. It does not automatically traverse every link or load the surrounding corpus.
+
+The successful path remains intentionally small:
+
+```text
+metadata
+→ complete evidence plan
+→ selected bodies
+→ answer
+```
+
+## Grounded in current agent guidance
+
+This design follows the same context-engineering direction described by Anthropic and OpenAI.
+
+**Anthropic — Agent Skills**
+
+Anthropic describes skill metadata such as a name and description as the first level of progressive disclosure, followed by the selected skill body and then deeper linked resources. This project applies the same principle to Markdown knowledge bases.
+
+https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
+
+**Anthropic — Effective context engineering**
+
+Anthropic argues for keeping context focused on high-signal information and retrieving additional context just in time. It also describes agentic search as a process in which information discovered during navigation can guide the next retrieval decision.
+
+https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+
+**OpenAI — Harness engineering**
+
+OpenAI recommends giving agents a **map rather than a giant instruction manual**, keeping the entry point small, organizing deeper knowledge for discovery, and enforcing repository structure mechanically.
+
+https://openai.com/index/harness-engineering/
+
+**OpenAI — A practical guide to building agents**
+
+OpenAI emphasizes clear, standardized tool definitions and descriptions so agents can reliably discover and invoke the capabilities they need.
+
+https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf
+
+The common principle is:
+
+> **Keep always-visible context small, make the map informative, and disclose detailed information only when it becomes relevant.**
+
+## Corpora
+
+### Northstar
+
+A compact synthetic enterprise and policy knowledge base with topics such as products, billing, governance, regional rules, infrastructure, incidents, approvals, overrides, and exceptions.
+
+### Tell Aster
+
+A larger synthetic archaeological archive covering excavation, stratigraphy, ceramics, artifacts, burials, environmental evidence, laboratory dating, inscriptions, conservation, museum provenance, remote sensing, and archaeological synthesis.
+
+Tell Aster contains **80 knowledge documents**. Its datasets and evaluator gold live separately under `datasets/`, not inside `corpus/tell-aster/`.
+
+## Repository layout
+
+```text
+corpus/        knowledge documents only
+datasets/      evaluation questions and evaluator-only gold
+prompts/       runtime prompts
+src/           progressive-disclosure runtime and evaluator
+experiments/   benchmark configurations
+scripts/       validation and evaluation entry points
+docs/          methodology and engineering guidance
+```
+
+Evaluator ground truth—including required document IDs and expected answers—is never supplied to the runtime agent.
+
+## Run it
+
+Install the project dependencies, configure the model credentials expected by the repository, then run the deterministic checks:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-# fill OPENAI_API_KEY in .env
 python -m pytest
-python scripts/validate_corpus.py
-python scripts/validate_dataset.py
+python scripts/check_all.py
 ```
 
-## Diagnostics before end-to-end runs
-
-Measure the answer ceiling with gold evidence supplied directly:
+Run the small verification suite:
 
 ```bash
-python scripts/run_diagnostics.py \
-  --mode oracle \
-  --tag single_doc \
-  --runs 1 \
-  --dry-run
+python scripts/run_eval_suite.py \
+  --suite experiments/suites/verify-all-v18.yaml
 ```
 
-Measure metadata discovery without document bodies or answering:
+Run the full benchmark:
 
 ```bash
-python scripts/run_diagnostics.py \
-  --mode selection \
-  --tag single_doc \
-  --runs 1 \
-  --dry-run
+python scripts/run_eval_suite.py \
+  --suite experiments/suites/eval-all-v18.yaml \
+  --runs 1
 ```
 
-A small diagnostic can target only known hard categories/cases before spending on the whole dataset.
+## Evaluation philosophy
 
-## End-to-end verification and validation
+The benchmark separates several questions that are easy to conflate:
 
-`datasets/eval-v1.yaml` contains 60 cases: 40 evaluator-labeled single-document cases and 20 evaluator-labeled multi-document cases. Those labels are used **only by the benchmark runner to choose cases**. The runtime is not told how many documents the answer requires; it must decide from the question and activation metadata whether one body is sufficient or additional bodies are needed.
+- Did the model find the right evidence?
+- Did it find the evidence early?
+- Did it load unnecessary documents?
+- Could it answer correctly from the evidence it had?
+- Did it attribute every required source?
+- Did it stop once the evidence was sufficient?
 
-**Important:** V9 metadata and architecture were designed after inspecting V7 failures on `eval-v1`, so `eval-v1` is now a validation set, not a final untouched test set. Freeze a new `eval-v2` before making final held-out claims.
+This matters because a correct-looking answer is not enough for evidence-grounded retrieval, while a retrieval miss should not automatically be misdiagnosed as an answering failure.
 
-Run the small model-backed verification sets first:
+The repository therefore reports both **strict end-to-end success** and **answer accuracy**, together with discovery, attribution, first-read hit rate, document precision, model calls, and knowledge fraction loaded.
 
-```bash
-python scripts/run_evals.py --config experiments/verify-single-v1.yaml --dry-run
-python scripts/run_evals.py --config experiments/verify-single-v1.yaml
+## More detail
 
-python scripts/run_evals.py --config experiments/verify-multi-v1.yaml --dry-run
-python scripts/run_evals.py --config experiments/verify-multi-v1.yaml
-```
-
-The single-document verification set has 24 case trials (8 hard cases × 3 repeats); the historical eval-v1 multi verification set has 16 (8 difficult cases × 2 repeats). V14 retains `datasets/multi-dev-v2.yaml` plus `experiments/verify-multi-v2.yaml`, a 20-trial genuine multi-document development set where every required body contributes a distinct requested fact or transformation.
-
-Then run the larger validations independently:
-
-```bash
-# 40 cases × 5 repeats = 200 single-document case trials
-python scripts/run_evals.py --config experiments/eval-single-v1.yaml --dry-run
-python scripts/run_evals.py --config experiments/eval-single-v1.yaml
-
-# 20 cases × 5 repeats = 100 multi-document case trials
-python scripts/run_evals.py --config experiments/eval-multi-v1.yaml --dry-run
-python scripts/run_evals.py --config experiments/eval-multi-v1.yaml
-```
-
-CLI `--case` and `--tag` filters only narrow the subset configured by an experiment file; they cannot broaden a single-document config into multi-document cases or vice versa.
-
-Generated runs write `trials.jsonl`, `manifest.json`, `summary.json`, and `report.md` under `results/` and are ignored by Git.
-
-See `docs/methodology.md` and `docs/eval-design.md` for the mechanism and metrics.
-
-## Multi-document development
-
-```bash
-python scripts/validate_dataset.py --dataset datasets/multi-dev-v2.yaml
-python scripts/run_evals.py --config experiments/verify-multi-v2.yaml --dry-run
-python scripts/run_evals.py --config experiments/verify-multi-v2.yaml
-```
-
-This development set is intentionally not held out; use it to improve genuine multi-document planning and composition, then freeze a new untouched multi-document benchmark for final claims.
+- [`docs/methodology.md`](docs/methodology.md) — evaluation design and metrics
+- [`docs/how-to-corpus-metadata.md`](docs/how-to-corpus-metadata.md) — how to design discoverable corpus metadata
+- [`docs/how-to-progressive-disclosure-runtime.md`](docs/how-to-progressive-disclosure-runtime.md) — runtime design and evidence-planning rules

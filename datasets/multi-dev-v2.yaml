@@ -1,6 +1,7 @@
 name: multi-dev-v2
 version: 2
 profile: development
+corpus: northstar
 description: Development set for genuine multi-document progressive disclosure. Each case is written so every declared required document contributes a distinct requested fact or transformation.
 cases:
   - id: MDEV-001

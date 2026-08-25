@@ -1,0 +1,1439 @@
+name: tell-aster-eval-v1
+version: 1
+profile: benchmark
+corpus: tell-aster
+require_indispensable_expected_contribution: true
+check_global_metadata_leakage: true
+description: Evaluation cases for the fictional Tell Aster archaeological archive. Ground-truth fields are
+  evaluator-only and must not be exposed to the runtime retrieval agent.
+cases:
+- id: TA-S-001
+  question: What was the recorded thickness of the compact red-brown packing beneath Surface S-12 in Trench T3?
+  tags:
+  - single_doc
+  - excavation
+  required_documents:
+  - TA-EXC-01
+  expected_contains:
+  - 14 cm
+- id: TA-S-002
+  question: Which room in Trench T5 contained the basalt pivot stone still seated beside doorway D-19?
+  tags:
+  - single_doc
+  - excavation
+  required_documents:
+  - TA-EXC-02
+  expected_contains:
+  - Room 5
+- id: TA-S-003
+  question: Which context was recorded immediately beneath Floor F-44 in Trench T8?
+  tags:
+  - single_doc
+  - excavation
+  required_documents:
+  - TA-EXC-03
+  expected_contains:
+  - C-318
+- id: TA-S-004
+  question: From which context was the bone gaming piece SF-241 recovered?
+  tags:
+  - single_doc
+  - excavation
+  required_documents:
+  - TA-EXC-04
+  expected_contains:
+  - C-407
+- id: TA-S-005
+  question: How wide was the narrowest preserved passage through the inner west gate?
+  tags:
+  - single_doc
+  - excavation
+  required_documents:
+  - TA-EXC-05
+  expected_contains:
+  - 1.86 m
+- id: TA-S-006
+  question: What feature number was assigned to the oval installation first interpreted as a workshop hearth?
+  tags:
+  - single_doc
+  - excavation
+  required_documents:
+  - TA-EXC-06
+  expected_contains:
+  - F-41
+- id: TA-S-007
+  question: What size range was recorded for the angular limestone fragments in the dump immediately east of W-91?
+  tags:
+  - single_doc
+  - excavation
+  required_documents:
+  - TA-EXC-07
+  expected_contains:
+  - 3–5 cm
+- id: TA-S-008
+  question: At what elevation was the copper-alloy hoard SF-088 recorded?
+  tags:
+  - single_doc
+  - excavation
+  required_documents:
+  - TA-EXC-08
+  expected_contains:
+  - 412.37 m
+- id: TA-S-009
+  question: How many distinct resurfacing episodes were recognized above the original pebble pavement?
+  tags:
+  - single_doc
+  - excavation
+  required_documents:
+  - TA-EXC-09
+  expected_contains:
+  - five resurfacing episodes
+- id: TA-S-010
+  question: Which context supplied plaster sample PL-33?
+  tags:
+  - single_doc
+  - excavation
+  required_documents:
+  - TA-EXC-10
+  expected_contains:
+  - C-552
+- id: TA-S-011
+  question: What was the internal length of Hall 3A along its north–south axis?
+  tags:
+  - single_doc
+  - architecture
+  required_documents:
+  - TA-ARC-01
+  expected_contains:
+  - 11.42 m
+- id: TA-S-012
+  question: How many doorways opened directly onto Courtyard 8?
+  tags:
+  - single_doc
+  - architecture
+  required_documents:
+  - TA-ARC-02
+  expected_contains:
+  - Six doorways
+- id: TA-S-013
+  question: What was the preserved maximum height of Bin Bn-6?
+  tags:
+  - single_doc
+  - architecture
+  required_documents:
+  - TA-ARC-03
+  expected_contains:
+  - 1.34 m
+- id: TA-S-014
+  question: What is the average batter of retaining wall W-63?
+  tags:
+  - single_doc
+  - architecture
+  required_documents:
+  - TA-ARC-04
+  expected_contains:
+  - 7.5 degrees
+- id: TA-S-015
+  question: Which room could only be reached by passing through Room 7C?
+  tags:
+  - single_doc
+  - architecture
+  required_documents:
+  - TA-ARC-05
+  expected_contains:
+  - Room 7D
+- id: TA-S-016
+  question: Which wall contains the only recorded header blocks with double drafted margins?
+  tags:
+  - single_doc
+  - architecture
+  required_documents:
+  - TA-ARC-06
+  expected_contains:
+  - W-118
+- id: TA-S-017
+  question: How many large plastered bins adjoined the western side of the F-41 room?
+  tags:
+  - single_doc
+  - architecture
+  required_documents:
+  - TA-ARC-07
+  expected_contains:
+  - three
+- id: TA-S-018
+  question: What was the orientation of the main cemetery enclosure wall?
+  tags:
+  - single_doc
+  - architecture
+  required_documents:
+  - TA-ARC-08
+  expected_contains:
+  - 083 degrees
+- id: TA-S-019
+  question: Which fabric code was assigned to the coarse chaff-tempered cooking jars from Trench T3?
+  tags:
+  - single_doc
+  - ceramics
+  required_documents:
+  - TA-CER-01
+  expected_contains:
+  - Fabric C7
+- id: TA-S-020
+  question: To which ceramic horizon was the sealed assemblage from C-318 assigned?
+  tags:
+  - single_doc
+  - ceramics
+  required_documents:
+  - TA-CER-02
+  expected_contains:
+  - Ceramic Horizon IV
+- id: TA-S-021
+  question: What catalogue type was assigned to the blue-slipped hemispherical bowl from C-366?
+  tags:
+  - single_doc
+  - ceramics
+  required_documents:
+  - TA-CER-03
+  expected_contains:
+  - Type IF-12
+- id: TA-S-022
+  question: What proportion of diagnostic sherds in kiln dump C-289 were overfired wasters?
+  tags:
+  - single_doc
+  - ceramics
+  required_documents:
+  - TA-CER-04
+  expected_contains:
+  - 38 percent
+- id: TA-S-023
+  question: Which diagnostic form first becomes common in Ceramic Horizon V?
+  tags:
+  - single_doc
+  - ceramics
+  required_documents:
+  - TA-CER-05
+  expected_contains:
+  - carinated cup form K5
+- id: TA-S-024
+  question: Which burial contained the only complete red-burnished flask of Form RB-3?
+  tags:
+  - single_doc
+  - ceramics
+  required_documents:
+  - TA-CER-06
+  expected_contains:
+  - Burial B-14
+- id: TA-S-025
+  question: Which petrographic group was judged non-local because of abundant volcanic temper?
+  tags:
+  - single_doc
+  - ceramics
+  required_documents:
+  - TA-CER-07
+  expected_contains:
+  - Petrographic Group P6
+- id: TA-S-026
+  question: Which context was reassigned from Horizon V to Horizon VI after the 2021 review?
+  tags:
+  - single_doc
+  - ceramics
+  required_documents:
+  - TA-CER-08
+  expected_contains:
+  - C-511
+- id: TA-S-027
+  question: What material was used for the inlay of SF-132?
+  tags:
+  - single_doc
+  - artifacts
+  required_documents:
+  - TA-ART-01
+  expected_contains:
+  - shell inlay
+- id: TA-S-028
+  question: How was SF-203 classified in the seal catalogue?
+  tags:
+  - single_doc
+  - artifacts
+  required_documents:
+  - TA-ART-02
+  expected_contains:
+  - Coastal Type K seal
+- id: TA-S-029
+  question: How many socketed arrowheads were included in hoard SF-088?
+  tags:
+  - single_doc
+  - artifacts
+  required_documents:
+  - TA-ART-03
+  expected_contains:
+  - 17 socketed arrowheads
+- id: TA-S-030
+  question: What function was assigned to SF-241 after wear analysis?
+  tags:
+  - single_doc
+  - artifacts
+  required_documents:
+  - TA-ART-04
+  expected_contains:
+  - gaming counter
+- id: TA-S-031
+  question: What stone was identified for bowl SF-317?
+  tags:
+  - single_doc
+  - artifacts
+  required_documents:
+  - TA-ART-05
+  expected_contains:
+  - banded calcite
+- id: TA-S-032
+  question: What material was confirmed for bead group BG-27?
+  tags:
+  - single_doc
+  - artifacts
+  required_documents:
+  - TA-ART-06
+  expected_contains:
+  - faience
+- id: TA-S-033
+  question: What was the mean mass of the complete pyramidal loom weights from Room 12?
+  tags:
+  - single_doc
+  - artifacts
+  required_documents:
+  - TA-ART-07
+  expected_contains:
+  - 612 g
+- id: TA-S-034
+  question: Which personal name is read in line 2 of INS-14?
+  tags:
+  - single_doc
+  - inscriptions
+  required_documents:
+  - TA-INS-01
+  expected_contains:
+  - Tarumes
+- id: TA-S-035
+  question: What numeral is scratched beside doorway D-44?
+  tags:
+  - single_doc
+  - inscriptions
+  required_documents:
+  - TA-INS-02
+  expected_contains:
+  - numeral 27
+- id: TA-S-036
+  question: Which commodity is listed after the broken personal name on line 5 of CT-22?
+  tags:
+  - single_doc
+  - inscriptions
+  required_documents:
+  - TA-INS-03
+  expected_contains:
+  - sesame oil
+- id: TA-S-037
+  question: Which ruler's name appears on sealing group SG-9?
+  tags:
+  - single_doc
+  - inscriptions
+  required_documents:
+  - TA-INS-04
+  expected_contains:
+  - Mekar son of Dulai
+- id: TA-S-038
+  question: What grain measure is written on ostracon O-31?
+  tags:
+  - single_doc
+  - inscriptions
+  required_documents:
+  - TA-INS-05
+  expected_contains:
+  - three qar
+- id: TA-S-039
+  question: Which kinship term appears on marker GM-12?
+  tags:
+  - single_doc
+  - inscriptions
+  required_documents:
+  - TA-INS-06
+  expected_contains:
+  - daughter of
+- id: TA-S-040
+  question: What mass was recorded for inscribed weight IW-5 after conservation?
+  tags:
+  - single_doc
+  - inscriptions
+  required_documents:
+  - TA-INS-07
+  expected_contains:
+  - 487.6 g
+- id: TA-S-041
+  question: On which side was the individual in Burial B-09 placed?
+  tags:
+  - single_doc
+  - burials
+  required_documents:
+  - TA-BUR-01
+  expected_contains:
+  - left side
+- id: TA-S-042
+  question: What age-at-death range was estimated for B-09?
+  tags:
+  - single_doc
+  - burials
+  required_documents:
+  - TA-BUR-02
+  expected_contains:
+  - 35–42 years
+- id: TA-S-043
+  question: How many ceramic vessels were deposited at the feet in B-14?
+  tags:
+  - single_doc
+  - burials
+  required_documents:
+  - TA-BUR-03
+  expected_contains:
+  - four ceramic vessels
+- id: TA-S-044
+  question: Which burial showed a healed midshaft fracture of the right ulna?
+  tags:
+  - single_doc
+  - burials
+  required_documents:
+  - TA-BUR-04
+  expected_contains:
+  - B-17
+- id: TA-S-045
+  question: What minimum number of individuals was established for Tomb C2?
+  tags:
+  - single_doc
+  - burials
+  required_documents:
+  - TA-BUR-05
+  expected_contains:
+  - nine individuals
+- id: TA-S-046
+  question: What dental age was assigned to Burial B-23?
+  tags:
+  - single_doc
+  - burials
+  required_documents:
+  - TA-BUR-06
+  expected_contains:
+  - 6.5–7.5 years
+- id: TA-S-047
+  question: Which sampled burial had the clearest non-local strontium signature?
+  tags:
+  - single_doc
+  - burials
+  required_documents:
+  - TA-BUR-07
+  expected_contains:
+  - B-21
+- id: TA-S-048
+  question: Which cereal dominated sample BOT-42?
+  tags:
+  - single_doc
+  - environment
+  required_documents:
+  - TA-ENV-01
+  expected_contains:
+  - Hulled barley
+- id: TA-S-049
+  question: Which taxon was most common by NISP in the western domestic quarter?
+  tags:
+  - single_doc
+  - environment
+  required_documents:
+  - TA-ENV-02
+  expected_contains:
+  - Sheep/goat
+- id: TA-S-050
+  question: Which pulse crop was most abundant in Bin Bn-6?
+  tags:
+  - single_doc
+  - environment
+  required_documents:
+  - TA-ENV-03
+  expected_contains:
+  - lentil
+- id: TA-S-051
+  question: Which wood taxon dominated charcoal sample CH-61?
+  tags:
+  - single_doc
+  - environment
+  required_documents:
+  - TA-ENV-04
+  expected_contains:
+  - tamarisk
+- id: TA-S-052
+  question: Which mollusc genus indicated persistent damp conditions near Drain D-31?
+  tags:
+  - single_doc
+  - environment
+  required_documents:
+  - TA-ENV-05
+  expected_contains:
+  - Melanopsis
+- id: TA-S-053
+  question: Which room produced the highest dung-spherulite concentration?
+  tags:
+  - single_doc
+  - environment
+  required_documents:
+  - TA-ENV-06
+  expected_contains:
+  - Room 29
+- id: TA-S-054
+  question: Which marine shell species was identified in ornament waste from C-477?
+  tags:
+  - single_doc
+  - environment
+  required_documents:
+  - TA-ENV-07
+  expected_contains:
+  - Conus mediterraneus
+- id: TA-S-055
+  question: What laboratory code was assigned to expedition sample Aster-RC-117?
+  tags:
+  - single_doc
+  - dating
+  required_documents:
+  - TA-DAT-01
+  expected_contains:
+  - LAB-4821
+- id: TA-S-056
+  question: What calibrated range is reported for sample Aster-RC-166 at 95.4% probability?
+  tags:
+  - single_doc
+  - dating
+  required_documents:
+  - TA-DAT-02
+  expected_contains:
+  - 785–705 BCE
+- id: TA-S-057
+  question: What modelled date range is given for the main use of Ceramic Horizon IV?
+  tags:
+  - single_doc
+  - dating
+  required_documents:
+  - TA-DAT-03
+  expected_contains:
+  - 940–865 BCE
+- id: TA-S-058
+  question: What is the latest preserved ring date in timber DT-7?
+  tags:
+  - single_doc
+  - dating
+  required_documents:
+  - TA-DAT-04
+  expected_contains:
+  - 1024 BCE
+- id: TA-S-059
+  question: What age estimate is reported for OSL sample OSL-6?
+  tags:
+  - single_doc
+  - dating
+  required_documents:
+  - TA-DAT-05
+  expected_contains:
+  - 2.93 ± 0.18 ka
+- id: TA-S-060
+  question: Which sample yielded the youngest calibrated median in the T9 series?
+  tags:
+  - single_doc
+  - dating
+  required_documents:
+  - TA-DAT-06
+  expected_contains:
+  - Aster-RC-204
+- id: TA-S-061
+  question: What laboratory age was reported for TL sample TL-11?
+  tags:
+  - single_doc
+  - dating
+  required_documents:
+  - TA-DAT-07
+  expected_contains:
+  - 2860 ± 190 years BP
+- id: TA-S-062
+  question: Which consolidant was used on the friable edge of SF-203?
+  tags:
+  - single_doc
+  - conservation
+  required_documents:
+  - TA-CON-01
+  expected_contains:
+  - 2% Paraloid B-72
+- id: TA-S-063
+  question: Which object received alkaline sulfite treatment in batch MC-12?
+  tags:
+  - single_doc
+  - conservation
+  required_documents:
+  - TA-CON-02
+  expected_contains:
+  - SF-091
+- id: TA-S-064
+  question: What museum accession number corresponds to SF-241?
+  tags:
+  - single_doc
+  - conservation
+  required_documents:
+  - TA-CON-03
+  expected_contains:
+  - TAM 2013.184
+- id: TA-S-065
+  question: Which excavation season was confirmed for object L-77?
+  tags:
+  - single_doc
+  - conservation
+  required_documents:
+  - TA-CON-04
+  expected_contains:
+  - 1968 season
+- id: TA-S-066
+  question: Which pigment showed the most severe powdering in panel WP-4?
+  tags:
+  - single_doc
+  - conservation
+  required_documents:
+  - TA-CON-05
+  expected_contains:
+  - Egyptian blue
+- id: TA-S-067
+  question: Which context is shown in photograph frame PR-2014-337?
+  tags:
+  - single_doc
+  - conservation
+  required_documents:
+  - TA-CON-06
+  expected_contains:
+  - C-366
+- id: TA-S-068
+  question: What anomaly number marks the strongest probable kiln signature?
+  tags:
+  - single_doc
+  - survey
+  required_documents:
+  - TA-SUR-01
+  expected_contains:
+  - Anomaly M-17
+- id: TA-S-069
+  question: At what estimated depth does reflector cluster G-12 begin?
+  tags:
+  - single_doc
+  - survey
+  required_documents:
+  - TA-SUR-02
+  expected_contains:
+  - 0.72 m
+- id: TA-S-070
+  question: Which source area best matches the pale limestone used in W-118?
+  tags:
+  - single_doc
+  - survey
+  required_documents:
+  - TA-SUR-03
+  expected_contains:
+  - Kharif Ridge source
+- id: TA-S-071
+  question: Which terrace surface was identified as the oldest preserved alluvial bench?
+  tags:
+  - single_doc
+  - survey
+  required_documents:
+  - TA-SUR-04
+  expected_contains:
+  - Terrace Q3
+- id: TA-S-072
+  question: What is the highest mapped elevation on the mound summit?
+  tags:
+  - single_doc
+  - survey
+  required_documents:
+  - TA-SUR-05
+  expected_contains:
+  - 428.16 m
+- id: TA-S-073
+  question: Which transect had the highest median phosphate value?
+  tags:
+  - single_doc
+  - survey
+  required_documents:
+  - TA-SUR-06
+  expected_contains:
+  - Transect P4
+- id: TA-S-074
+  question: Which trench was described as the main focus of the 2014 season?
+  tags:
+  - single_doc
+  - synthesis
+  required_documents:
+  - TA-SYN-01
+  expected_contains:
+  - Trench T9
+- id: TA-S-075
+  question: To which phase was W-91 reassigned in the final northern-slope synthesis?
+  tags:
+  - single_doc
+  - synthesis
+  required_documents:
+  - TA-SYN-02
+  expected_contains:
+  - Phase III
+- id: TA-S-076
+  question: What title is reconstructed for Mekar in the Tell Aster historical note?
+  tags:
+  - single_doc
+  - synthesis
+  required_documents:
+  - TA-SYN-03
+  expected_contains:
+  - keeper of the river gates
+- id: TA-S-077
+  question: Who first proposed in the correspondence that F-41 should be treated as a crop-processing installation?
+  tags:
+  - single_doc
+  - synthesis
+  required_documents:
+  - TA-SYN-04
+  expected_contains:
+  - Dr. Nera Vos
+- id: TA-S-078
+  question: Which ceramic horizon is described as the shortest-lived in the current sequence?
+  tags:
+  - single_doc
+  - synthesis
+  required_documents:
+  - TA-SYN-05
+  expected_contains:
+  - Ceramic Horizon II
+- id: TA-S-079
+  question: How many graves were excavated during the 2018–2020 cemetery campaigns?
+  tags:
+  - single_doc
+  - synthesis
+  required_documents:
+  - TA-SYN-06
+  expected_contains:
+  - 31 graves
+- id: TA-S-080
+  question: In which year did the expedition adopt context-based recording across all trenches?
+  tags:
+  - single_doc
+  - synthesis
+  required_documents:
+  - TA-SYN-07
+  expected_contains:
+  - '1997'
+- id: TA-M-001
+  question: What calibrated date range applies to the destruction layer of Room 6 in Trench T5?
+  tags:
+  - multi_doc
+  - sample_context_date
+  - entity_linking
+  required_documents:
+  - TA-EXC-02
+  - TA-DAT-01
+  expected_contains:
+  - 1010–930 BCE
+  required_evidence:
+    TA-EXC-02:
+    - Aster-RC-117 was taken from the charcoal-rich Room 6 destruction layer
+    TA-DAT-01:
+    - 1010–930 BCE
+- id: TA-M-002
+  question: What ceramic horizon and absolute date range constrain the construction of Floor F-44 in Trench T8?
+  tags:
+  - multi_doc
+  - stratigraphy
+  - ceramic_chronology
+  - absolute_dating
+  required_documents:
+  - TA-EXC-03
+  - TA-CER-02
+  - TA-DAT-03
+  expected_contains:
+  - Ceramic Horizon IV
+  - 940–865 BCE
+  required_evidence:
+    TA-EXC-03:
+    - immediately below Floor F-44
+    TA-CER-02:
+    - C-318 belongs to Ceramic Horizon IV
+    TA-DAT-03:
+    - 940–865 BCE
+- id: TA-M-003
+  question: Which burial contained SF-203, and what imported object type was it?
+  tags:
+  - multi_doc
+  - burial
+  - artifact_identification
+  required_documents:
+  - TA-BUR-01
+  - TA-ART-02
+  expected_contains:
+  - Burial B-09
+  - Coastal Type K seal
+  required_evidence:
+    TA-BUR-01:
+    - Burial B-09
+    TA-ART-02:
+    - Coastal Type K seal
+- id: TA-M-004
+  question: Which named individual is attested in the final occupation level of Building 3?
+  tags:
+  - multi_doc
+  - inscription
+  - findspot
+  - historical_identity
+  required_documents:
+  - TA-EXC-05
+  - TA-INS-01
+  expected_contains:
+  - Tarumes
+  required_evidence:
+    TA-EXC-05:
+    - INS-14 was recovered from the final occupation level of Building 3
+    TA-INS-01:
+    - Tarumes
+- id: TA-M-005
+  question: What was Feature F-41 initially interpreted as, and what botanical and architectural evidence supports reinterpreting it as part of a storage and crop-processing complex?
+  tags:
+  - multi_doc
+  - interpretation_revision
+  - environment
+  - architecture
+  required_documents:
+  - TA-EXC-06
+  - TA-ENV-01
+  - TA-ARC-07
+  expected_contains:
+  - workshop hearth
+  - dense cereal-processing waste
+  - three large plastered bins
+  required_evidence:
+    TA-EXC-06:
+    - initially interpreted as a workshop hearth
+    TA-ENV-01:
+    - dense cereal-processing waste
+    TA-ARC-07:
+    - three large plastered bins
+- id: TA-M-006
+  question: What later phase assignment should be used for wall W-91, and what was its earlier field assignment?
+  tags:
+  - multi_doc
+  - revision
+  - stratigraphy
+  required_documents:
+  - TA-EXC-07
+  - TA-SYN-02
+  expected_contains:
+  - Phase II
+  - Phase III
+  required_evidence:
+    TA-EXC-07:
+    - initial field section assigned W-91 to Phase II
+    TA-SYN-02:
+    - Phase III
+- id: TA-M-007
+  question: What object category and quantity make up the copper-alloy hoard found at elevation 412.37 m?
+  tags:
+  - multi_doc
+  - artifact_context
+  - catalogue
+  required_documents:
+  - TA-EXC-08
+  - TA-ART-03
+  expected_contains:
+  - 17 socketed arrowheads
+  required_evidence:
+    TA-EXC-08:
+    - hoard at elevation 412.37 m was registered as SF-088
+    TA-ART-03:
+    - 17 socketed arrowheads
+- id: TA-M-008
+  question: Which sampled courtyard deposit produced the youngest radiocarbon median in the T9 series, and how many
+    resurfacings overlay the original pavement there?
+  tags:
+  - multi_doc
+  - courtyard_sequence
+  - dating
+  required_documents:
+  - TA-EXC-09
+  - TA-DAT-06
+  expected_contains:
+  - Aster-RC-204
+  - five resurfacing episodes
+  required_evidence:
+    TA-EXC-09:
+    - five resurfacing episodes
+    TA-DAT-06:
+    - Aster-RC-204
+- id: TA-M-009
+  question: What is the geological source match for the limestone used in the temple wall that uniquely contains
+    double-drafted header blocks?
+  tags:
+  - multi_doc
+  - architecture
+  - geology
+  - provenance
+  required_documents:
+  - TA-ARC-06
+  - TA-SUR-03
+  expected_contains:
+  - Kharif Ridge
+  required_evidence:
+    TA-ARC-06:
+    - only temple wall with double-drafted header blocks
+    TA-SUR-03:
+    - Kharif Ridge source
+- id: TA-M-010
+  question: Which crop was stored in the bin that survives to 1.34 m in the granary block?
+  tags:
+  - multi_doc
+  - architecture
+  - botany
+  - storage
+  required_documents:
+  - TA-ARC-03
+  - TA-ENV-03
+  expected_contains:
+  - lentil
+  required_evidence:
+    TA-ARC-03:
+    - surviving to 1.34 m
+    TA-ENV-03:
+    - lentil
+- id: TA-M-011
+  question: Which burial contained SF-203, and what age-at-death range was estimated for that individual?
+  tags:
+  - multi_doc
+  - burial
+  - osteology
+  - demography
+  required_documents:
+  - TA-BUR-01
+  - TA-BUR-02
+  expected_contains:
+  - Burial B-09
+  - 35–42 years
+  required_evidence:
+    TA-BUR-01:
+    - Burial B-09
+    TA-BUR-02:
+    - 35–42 years
+- id: TA-M-012
+  question: What museum accession number now tracks the worked-bone object recovered from context C-407?
+  tags:
+  - multi_doc
+  - find_context
+  - museum_provenance
+  required_documents:
+  - TA-EXC-04
+  - TA-CON-03
+  expected_contains:
+  - TAM 2013.184
+  required_evidence:
+    TA-EXC-04:
+    - worked-bone object recovered from C-407 is SF-241
+    TA-CON-03:
+    - TAM 2013.184
+- id: TA-M-013
+  question: What functional identification was ultimately given to the bone object from C-407?
+  tags:
+  - multi_doc
+  - find_context
+  - artifact_identification
+  required_documents:
+  - TA-EXC-04
+  - TA-ART-04
+  expected_contains:
+  - gaming counter
+  required_evidence:
+    TA-EXC-04:
+    - SF-241 is the worked-bone find recovered from C-407
+    TA-ART-04:
+    - gaming counter
+- id: TA-M-014
+  question: Which lower-town anomaly is the strongest kiln candidate, and what proportion of diagnostic sherds in the
+    excavated Trench T7 comparator were overfired wasters?
+  tags:
+  - multi_doc
+  - remote_sensing
+  - ceramic_technology
+  required_documents:
+  - TA-SUR-01
+  - TA-CER-04
+  expected_contains:
+  - Anomaly M-17
+  - 38 percent
+  required_evidence:
+    TA-SUR-01:
+    - Anomaly M-17
+    TA-CER-04:
+    - 38 percent
+- id: TA-M-015
+  question: What evidence links Room 29 to animal penning rather than clean storage?
+  tags:
+  - multi_doc
+  - environment
+  - spatial_analysis
+  - interpretation
+  required_documents:
+  - TA-ENV-06
+  - TA-ARC-07
+  expected_contains:
+  - highest dung-spherulite concentration
+  - service court
+  required_evidence:
+    TA-ENV-06:
+    - highest dung-spherulite concentration
+    TA-ARC-07:
+    - service court
+- id: TA-M-016
+  question: What ruler is named on sealing group SG-9, and what local title is reconstructed for him in the historical
+    synthesis?
+  tags:
+  - multi_doc
+  - inscription
+  - historical_synthesis
+  required_documents:
+  - TA-INS-04
+  - TA-SYN-03
+  expected_contains:
+  - Mekar son of Dulai
+  - keeper of the river gates
+  required_evidence:
+    TA-INS-04:
+    - Mekar son of Dulai
+    TA-SYN-03:
+    - keeper of the river gates
+- id: TA-M-017
+  question: What graffiti numeral is associated with the doorway on the only access route into Room 7D?
+  tags:
+  - multi_doc
+  - architecture
+  - graffiti
+  - spatial_association
+  required_documents:
+  - TA-ARC-05
+  - TA-INS-02
+  expected_contains:
+  - numeral 27
+  required_evidence:
+    TA-ARC-05:
+    - Access to Room 7D passes through Room 7C by way of doorway D-44
+    TA-INS-02:
+    - numeral 27
+- id: TA-M-018
+  question: In Trench T3 context C-152, what pottery fabric characterizes the cooking jars and what plant-processing
+    residue dominates flotation sample BOT-17?
+  tags:
+  - multi_doc
+  - ceramics
+  - botany
+  - context_comparison
+  required_documents:
+  - TA-CER-01
+  - TA-ENV-01
+  expected_contains:
+  - Fabric C7
+  - barley rachis fragments
+  required_evidence:
+    TA-CER-01:
+    - Fabric C7
+    TA-ENV-01:
+    - barley rachis fragments
+- id: TA-M-019
+  question: What calibrated date range applies to the grave represented by reflector cluster G-12 in the northern
+    cemetery?
+  tags:
+  - multi_doc
+  - cemetery
+  - dating
+  - remote_sensing
+  required_documents:
+  - TA-SUR-02
+  - TA-DAT-02
+  expected_contains:
+  - 785–705 BCE
+  required_evidence:
+    TA-SUR-02:
+    - later excavated and registered as Burial B-17
+    TA-DAT-02:
+    - 785–705 BCE
+- id: TA-M-020
+  question: Which grave contained the complete red-burnished Form RB-3 flask, and how many vessels were deposited at
+    that grave's feet?
+  tags:
+  - multi_doc
+  - burial
+  - ceramics
+  - grave_goods
+  required_documents:
+  - TA-CER-06
+  - TA-BUR-03
+  expected_contains:
+  - Burial B-14
+  - four ceramic vessels
+  required_evidence:
+    TA-CER-06:
+    - complete Form RB-3 flask
+    TA-BUR-03:
+    - four ceramic vessels
+- id: TA-M-021
+  question: Which geological source is the best match for the limestone of inscribed weight IW-5?
+  tags:
+  - multi_doc
+  - metrology
+  - geology
+  required_documents:
+  - TA-INS-07
+  - TA-SUR-03
+  expected_contains:
+  - Kharif Ridge
+  required_evidence:
+    TA-INS-07:
+    - IW-5 matches W-118
+    TA-SUR-03:
+    - Kharif Ridge source
+- id: TA-M-022
+  question: What was the earliest field phase assigned to W-91, and which later synthesis phase superseded it?
+  tags:
+  - multi_doc
+  - revision
+  - temporal_reasoning
+  required_documents:
+  - TA-EXC-07
+  - TA-SYN-02
+  expected_contains:
+  - Phase II
+  - Phase III
+  required_evidence:
+    TA-EXC-07:
+    - earlier Phase II assignment
+    TA-SYN-02:
+    - Phase III
+- id: TA-M-023
+  question: What evidence indicates that the source of dampness near Drain D-31 was persistent rather than a single
+    spill, and how many doorways fed the courtyard receiving that drainage?
+  tags:
+  - multi_doc
+  - environment
+  - architecture
+  - activity_area
+  required_documents:
+  - TA-ENV-05
+  - TA-ARC-02
+  expected_contains:
+  - Melanopsis
+  - Six doorways
+  required_evidence:
+    TA-ENV-05:
+    - Melanopsis
+    TA-ARC-02:
+    - Six doorways
+- id: TA-M-024
+  question: What petrographic group is assigned to the non-local volcanic-tempered storage jars, and which source area
+    is most consistent with that group?
+  tags:
+  - multi_doc
+  - provenance
+  - ceramics
+  - shell
+  required_documents:
+  - TA-CER-07
+  - TA-SUR-03
+  expected_contains:
+  - Petrographic Group P6
+  - Birat Cone Field
+  required_evidence:
+    TA-CER-07:
+    - Petrographic Group P6
+    TA-SUR-03:
+    - Birat Cone Field
+- id: TA-M-025
+  question: What shell species best matches the material used for the west-gate inlay on SF-132?
+  tags:
+  - multi_doc
+  - artifact_material
+  - conservation
+  required_documents:
+  - TA-ART-01
+  - TA-ENV-07
+  expected_contains:
+  - Conus mediterraneus
+  required_evidence:
+    TA-ART-01:
+    - shell inlay
+    TA-ENV-07:
+    - Conus mediterraneus
+- id: TA-M-026
+  question: Which pigment is the most serious conservation concern on the painted plaster exposure sampled as PL-33?
+  tags:
+  - multi_doc
+  - sampling
+  - conservation
+  - plaster
+  required_documents:
+  - TA-EXC-10
+  - TA-CON-05
+  expected_contains:
+  - Egyptian blue
+  required_evidence:
+    TA-EXC-10:
+    - PL-33 corresponds to panel WP-4
+    TA-CON-05:
+    - Egyptian blue
+- id: TA-M-027
+  question: Which context appears in photograph PR-2014-337, and what imported vessel type was catalogued from that
+    context?
+  tags:
+  - multi_doc
+  - photographic_register
+  - ceramics
+  - provenance
+  required_documents:
+  - TA-CON-06
+  - TA-CER-03
+  expected_contains:
+  - C-366
+  - Type IF-12
+  required_evidence:
+    TA-CON-06:
+    - PR-2014-337 shows context C-366
+    TA-CER-03:
+    - Type IF-12
+- id: TA-M-028
+  question: Which object came from the 1968 season, and what archival recording change introduced decades later helps
+    explain why older provenance needed reconciliation?
+  tags:
+  - multi_doc
+  - archive_history
+  - provenance
+  required_documents:
+  - TA-CON-04
+  - TA-SYN-07
+  expected_contains:
+  - L-77
+  - '1997'
+  required_evidence:
+    TA-CON-04:
+    - object L-77
+    TA-SYN-07:
+    - '1997'
+- id: TA-M-029
+  question: What fuel-wood taxon and latest timber ring date characterize the temple construction deposit beside timber
+    group DT-7?
+  tags:
+  - multi_doc
+  - charcoal
+  - dendrochronology
+  required_documents:
+  - TA-ENV-04
+  - TA-DAT-04
+  expected_contains:
+  - tamarisk
+  - 1024 BCE
+  required_evidence:
+    TA-ENV-04:
+    - tamarisk
+    TA-DAT-04:
+    - 1024 BCE
+- id: TA-M-030
+  question: Which burial shows the healed right-ulna fracture, and how many graves were excavated during the 2018–2020
+    cemetery campaigns?
+  tags:
+  - multi_doc
+  - osteology
+  - season_synthesis
+  required_documents:
+  - TA-BUR-04
+  - TA-SYN-06
+  expected_contains:
+  - B-17
+  - 31 graves
+  required_evidence:
+    TA-BUR-04:
+    - B-17
+    TA-SYN-06:
+    - 31 graves
+- id: TA-M-031
+  question: What was the estimated age of juvenile Burial B-23, and did its strontium result fall within the local or
+    non-local range?
+  tags:
+  - multi_doc
+  - osteology
+  - isotopes
+  - demography
+  required_documents:
+  - TA-BUR-06
+  - TA-BUR-07
+  expected_contains:
+  - 6.5–7.5 years
+  - falls inside the local Tell Aster strontium range
+  required_evidence:
+    TA-BUR-06:
+    - 6.5–7.5 years
+    TA-BUR-07:
+    - falls inside the local Tell Aster strontium range
+- id: TA-M-032
+  question: What kinship phrase is written on the marker reused in Tomb C2, and what minimum number of individuals was
+    established for that tomb?
+  tags:
+  - multi_doc
+  - burial
+  - inscription
+  - cemetery
+  required_documents:
+  - TA-BUR-05
+  - TA-INS-06
+  expected_contains:
+  - daughter of
+  - nine individuals
+  required_evidence:
+    TA-BUR-05:
+    - GM-12 was recovered reused in the blocking material of Tomb C2
+    - nine individuals
+    TA-INS-06:
+    - daughter of
+- id: TA-M-033
+  question: After the pottery reassessment of context C-511, which ceramic horizon and broad absolute date range should
+    be used for its main occupation?
+  tags:
+  - multi_doc
+  - ceramic_revision
+  - chronology_synthesis
+  required_documents:
+  - TA-CER-08
+  - TA-SYN-05
+  expected_contains:
+  - Horizon VI
+  - 720–660 BCE
+  required_evidence:
+    TA-CER-08:
+    - reassigned from Horizon V to Horizon VI
+    TA-SYN-05:
+    - 720–660 BCE
+- id: TA-M-034
+  question: What thermoluminescence age and overfired-waster proportion characterize kiln dump C-289?
+  tags:
+  - multi_doc
+  - laboratory_dating
+  - ceramic_production
+  required_documents:
+  - TA-DAT-07
+  - TA-CER-04
+  expected_contains:
+  - 2860 ± 190 years BP
+  - 38 percent
+  required_evidence:
+    TA-DAT-07:
+    - TL sample TL-11 was cut from a fired-clay kiln prop recovered in kiln dump context C-289
+    - 2860 ± 190 years BP
+    TA-CER-04:
+    - 38 percent
+- id: TA-M-035
+  question: Which geomorphic terrace is associated with OSL sample OSL-6, and what age estimate did that sample produce?
+  tags:
+  - multi_doc
+  - geomorphology
+  - osl_dating
+  required_documents:
+  - TA-DAT-05
+  - TA-SUR-04
+  expected_contains:
+  - Terrace Q3
+  - 2.93 ± 0.18 ka
+  required_evidence:
+    TA-DAT-05:
+    - immediately beneath the surface correlated with Terrace Q3
+    - 2.93 ± 0.18 ka
+    TA-SUR-04:
+    - oldest preserved alluvial bench
+- id: TA-M-036
+  question: Which mapped topographic zone contains the elevation at which hoard SF-088 was recovered?
+  tags:
+  - multi_doc
+  - topography
+  - findspot
+  required_documents:
+  - TA-EXC-08
+  - TA-SUR-05
+  expected_contains:
+  - southwestern bench
+  required_evidence:
+    TA-EXC-08:
+    - 412.37 m
+    TA-SUR-05:
+    - southwestern bench
+- id: TA-M-037
+  question: Which geochemical transect crosses the strongest probable kiln anomaly in the lower town?
+  tags:
+  - multi_doc
+  - geochemistry
+  - magnetometry
+  required_documents:
+  - TA-SUR-06
+  - TA-SUR-01
+  expected_contains:
+  - Transect P4
+  required_evidence:
+    TA-SUR-06:
+    - Transect P4 crosses the magnetometry cell containing anomaly M-17
+    TA-SUR-01:
+    - strongest probable kiln signature
+- id: TA-M-038
+  question: For the two written records carrying the Storehouse 2 docket, what commodity is listed on CT-22 and what
+    grain amount is recorded on O-31?
+  tags:
+  - multi_doc
+  - written_material
+  - commodities
+  required_documents:
+  - TA-INS-03
+  - TA-INS-05
+  expected_contains:
+  - sesame oil
+  - three qar
+  required_evidence:
+    TA-INS-03:
+    - sesame oil
+    TA-INS-05:
+    - three qar
+- id: TA-M-039
+  question: What materials were used for the stone bowl and bead group deposited together in Burial B-21?
+  tags:
+  - multi_doc
+  - artifact_material
+  - specialist_identification
+  required_documents:
+  - TA-ART-05
+  - TA-ART-06
+  expected_contains:
+  - banded calcite
+  - faience
+  required_evidence:
+    TA-ART-05:
+    - banded calcite
+    TA-ART-06:
+    - faience
+- id: TA-M-040
+  question: In the trench identified as the main focus of the 2014 season, which radiocarbon sample produced the
+    youngest calibrated median?
+  tags:
+  - multi_doc
+  - season_summary
+  - museum_accession
+  required_documents:
+  - TA-SYN-01
+  - TA-DAT-06
+  expected_contains:
+  - Aster-RC-204
+  required_evidence:
+    TA-SYN-01:
+    - Trench T9
+    TA-DAT-06:
+    - Aster-RC-204

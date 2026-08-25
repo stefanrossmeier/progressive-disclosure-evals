@@ -1,0 +1,7 @@
+{
+  "generator": "gpt-5.6-sol",
+  "api": "chatgpt.com",
+  "date": "2026-08-23",
+  "temperature": "default",
+  "prompt": "prompts/generate-corpus-northstar.prompt.md"
+}

@@ -17,7 +17,7 @@ class ScriptedBackend:
         return self.turns.pop(0)
 
 
-def select_call(i, primary, additional=(), usage=ModelUsage(), active=("subject",), excluded=()):
+def select_call(i, primary, additional=(), usage=ModelUsage(), needs=()):
     return ModelTurn(
         response_id=f"r{i}",
         text="",
@@ -25,10 +25,15 @@ def select_call(i, primary, additional=(), usage=ModelUsage(), active=("subject"
             f"c{i}",
             "select_documents",
             {
-                "active_qualifiers": list(active),
-                "excluded_qualifiers": list(excluded),
                 "evidence_plan": [
-                    {"need": f"need-{index}", "document_id": document_id}
+                    {
+                        "need": (
+                            needs[index - 1]
+                            if index <= len(needs)
+                            else f"need-{index}"
+                        ),
+                        "document_id": document_id,
+                    }
                     for index, document_id in enumerate([primary, *additional], start=1)
                 ],
                 "primary_document_id": primary,
@@ -68,7 +73,7 @@ def test_ideal_single_document_case_is_selection_plus_answer():
         select_call(1, "commercial.billing.credits.migration"),
         answer_call(2, "Team VIOLET using SABLE-88.", ["commercial.billing.credits.migration"]),
     ])
-    result = ProgressiveDisclosureAgent(backend).run("What applies to MIG-2?", KnowledgeBase("corpus/northstar"))
+    result = ProgressiveDisclosureAgent(backend).run("What applies to MIG-2?", KnowledgeBase("corpus/northstar-corpus"))
     assert result.termination == "answer"
     assert result.model_turns == 2
     assert result.document_reads == 1
@@ -81,7 +86,7 @@ def test_first_call_sees_activation_catalog_and_only_selection_tool():
         select_call(1, "commercial.billing.credits.migration"),
         answer_call(2, "VIOLET SABLE-88", ["commercial.billing.credits.migration"]),
     ])
-    ProgressiveDisclosureAgent(backend, max_documents=1).run("MIG-2?", KnowledgeBase("corpus/northstar"))
+    ProgressiveDisclosureAgent(backend, max_documents=1).run("MIG-2?", KnowledgeBase("corpus/northstar-corpus"))
     first = backend.calls[0]
     assert [tool["name"] for tool in first["tools"]] == ["select_documents"]
     assert first["tool_choice"] == {"type": "function", "name": "select_documents"}
@@ -95,7 +100,7 @@ def test_after_selection_model_sees_body_but_not_full_catalog():
         select_call(1, "commercial.billing.credits.migration"),
         answer_call(2, "VIOLET SABLE-88", ["commercial.billing.credits.migration"]),
     ])
-    ProgressiveDisclosureAgent(backend).run("MIG-2?", KnowledgeBase("corpus/northstar"))
+    ProgressiveDisclosureAgent(backend).run("MIG-2?", KnowledgeBase("corpus/northstar-corpus"))
     second = backend.calls[1]
     assert [tool["name"] for tool in second["tools"]] == ["submit_answer", "request_more_evidence"]
     assert second["tool_choice"] == "required"
@@ -115,7 +120,7 @@ def test_multiple_documents_can_be_selected_in_one_discovery_call():
             "operations.maintenance.emergency.authorization",
         ]),
     ])
-    result = ProgressiveDisclosureAgent(backend).run("Need both policies", KnowledgeBase("corpus/northstar"))
+    result = ProgressiveDisclosureAgent(backend).run("Need both policies", KnowledgeBase("corpus/northstar-corpus"))
     assert result.document_reads == 2
     assert result.model_turns == 2
     assert result.opened_document_ids[0] == "governance.security.credentials.emergency-access"
@@ -128,7 +133,7 @@ def test_bounded_recovery_selection_is_available_only_after_declared_gap():
         select_call(3, "commercial.billing.refunds.exceptions"),
         answer_call(4, "PEBBLE GLASS-12", ["commercial.billing.refunds.exceptions"]),
     ])
-    result = ProgressiveDisclosureAgent(backend).run("D-8 refund", KnowledgeBase("corpus/northstar"))
+    result = ProgressiveDisclosureAgent(backend).run("D-8 refund", KnowledgeBase("corpus/northstar-corpus"))
     assert result.termination == "answer"
     assert result.selection_rounds == 2
     assert result.opened_document_ids == (
@@ -147,7 +152,7 @@ def test_document_budget_stops_recovery_after_evidence_gap():
         select_call(1, "commercial.billing.refunds.standard"),
         need_more_call(2, "Need the exception."),
     ])
-    result = ProgressiveDisclosureAgent(backend, max_documents=1).run("D-8 refund", KnowledgeBase("corpus/northstar"))
+    result = ProgressiveDisclosureAgent(backend, max_documents=1).run("D-8 refund", KnowledgeBase("corpus/northstar-corpus"))
     assert result.termination == "document_limit"
     assert result.model_turns == 2
 
@@ -157,34 +162,34 @@ def test_usage_accumulates_across_stateless_stage_calls():
         select_call(1, "commercial.billing.credits.migration", usage=ModelUsage(100, 5)),
         answer_call(2, "ok", ["commercial.billing.credits.migration"], usage=ModelUsage(200, 7)),
     ])
-    result = ProgressiveDisclosureAgent(backend).run("MIG-2?", KnowledgeBase("corpus/northstar"))
+    result = ProgressiveDisclosureAgent(backend).run("MIG-2?", KnowledgeBase("corpus/northstar-corpus"))
     assert result.usage.input_tokens == 300
     assert result.usage.output_tokens == 12
 
 
 def test_invalid_or_missing_tool_call_terminates_cleanly():
     backend = ScriptedBackend([ModelTurn("r1", "", ()), ModelTurn("r2", "", ())])
-    result = ProgressiveDisclosureAgent(backend).run("q", KnowledgeBase("corpus/northstar"))
+    result = ProgressiveDisclosureAgent(backend).run("q", KnowledgeBase("corpus/northstar-corpus"))
     assert result.termination == "invalid_model_action"
 
 
-def test_selection_event_records_active_and_excluded_qualifiers():
+def test_selection_event_keeps_scope_inside_evidence_obligations():
     backend = ScriptedBackend([
         select_call(
             1,
             "governance.regions.us.billing-overrides",
-            active=("US-governed", "standard refund"),
-            excluded=("D-8 exception",),
+            needs=("US-governed standard refund with no D-8 exception",),
         ),
         answer_call(2, "FALCON RIDGE-91", ["governance.regions.us.billing-overrides"]),
     ])
     result = ProgressiveDisclosureAgent(backend).run(
         "US-governed standard refund; no D-8 exception applies.",
-        KnowledgeBase("corpus/northstar"),
+        KnowledgeBase("corpus/northstar-corpus"),
     )
     selection = next(event for event in result.events if event.kind == "select_documents")
-    assert selection.data["active_qualifiers"] == ["US-governed", "standard refund"]
-    assert selection.data["excluded_qualifiers"] == ["D-8 exception"]
+    assert "active_qualifiers" not in selection.data
+    assert "excluded_qualifiers" not in selection.data
+    assert selection.data["evidence_plan"][0]["need"] == "US-governed standard refund with no D-8 exception"
     assert selection.data["evidence_plan"][0]["document_id"] == "governance.regions.us.billing-overrides"
 
 
@@ -203,7 +208,7 @@ def test_evidence_call_receives_structured_routing_plan():
     ])
     ProgressiveDisclosureAgent(backend).run(
         "For an EU-governed Zephyr tenant, what tier remains assigned and what ceiling applies?",
-        KnowledgeBase("corpus/northstar"),
+        KnowledgeBase("corpus/northstar-corpus"),
     )
     evidence_state = backend.calls[1]["user_input"]
     assert "EVIDENCE OBLIGATIONS FROM ROUTING PLAN" in evidence_state
@@ -219,7 +224,7 @@ def test_one_stateless_protocol_retry_recovers_malformed_evidence_action():
         answer_call(3, "VIOLET SABLE-88", ["commercial.billing.credits.migration"]),
     ])
     result = ProgressiveDisclosureAgent(backend).run(
-        "What applies to MIG-2?", KnowledgeBase("corpus/northstar")
+        "What applies to MIG-2?", KnowledgeBase("corpus/northstar-corpus")
     )
     assert result.termination == "answer"
     assert result.model_turns == 3
@@ -238,7 +243,7 @@ def test_answer_citations_include_all_documents_from_completed_evidence_plan():
     ])
     result = ProgressiveDisclosureAgent(backend).run(
         "For a US-governed Nova tenant, give service class, tier, normal quota, and US ceiling.",
-        KnowledgeBase("corpus/northstar"),
+        KnowledgeBase("corpus/northstar-corpus"),
     )
     assert result.termination == "answer"
     assert set(result.cited_sources) == {
@@ -255,7 +260,7 @@ def test_request_more_evidence_uses_precise_gap_without_protocol_failure():
         select_call(3, "commercial.billing.refunds.exceptions"),
         answer_call(4, "PEBBLE GLASS-12"),
     ])
-    result = ProgressiveDisclosureAgent(backend).run("D-8 refund", KnowledgeBase("corpus/northstar"))
+    result = ProgressiveDisclosureAgent(backend).run("D-8 refund", KnowledgeBase("corpus/northstar-corpus"))
     assert result.termination == "answer"
     assert result.selection_rounds == 2
 
@@ -267,9 +272,29 @@ def test_empty_submit_answer_retry_receives_explicit_repair_instruction():
         answer_call(3, "VIOLET SABLE-88"),
     ])
     result = ProgressiveDisclosureAgent(backend).run(
-        "What applies to MIG-2?", KnowledgeBase("corpus/northstar")
+        "What applies to MIG-2?", KnowledgeBase("corpus/northstar-corpus")
     )
     assert result.termination == "answer"
     assert result.model_turns == 3
     assert "PROTOCOL REPAIR" in backend.calls[2]["user_input"]
     assert "answer field was empty" in backend.calls[2]["user_input"]
+
+
+def test_v18_style_budget_can_use_two_targeted_recovery_rounds():
+    backend = ScriptedBackend([
+        select_call(1, "commercial.billing.refunds.standard"),
+        need_more_call(2, "Need the duplicate-billing exception authority."),
+        select_call(3, "commercial.billing.refunds.exceptions"),
+        need_more_call(4, "Need the US billing override for the remaining scoped value."),
+        select_call(5, "governance.regions.us.billing-overrides"),
+        answer_call(6, "complete"),
+    ])
+    result = ProgressiveDisclosureAgent(
+        backend,
+        max_documents=4,
+        max_selection_rounds=3,
+    ).run("Resolve the scoped billing facts.", KnowledgeBase("corpus/northstar-corpus"))
+    assert result.termination == "answer"
+    assert result.selection_rounds == 3
+    assert result.document_reads == 3
+    assert result.model_turns == 6

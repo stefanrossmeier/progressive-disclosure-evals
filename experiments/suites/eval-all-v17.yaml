@@ -1,0 +1,6 @@
+name: eval-all-v17
+configs:
+  - experiments/v17/eval-single-v1.yaml
+  - experiments/v17/eval-multi-v1.yaml
+  - experiments/v17/tell-aster/eval-single-v1.yaml
+  - experiments/v17/tell-aster/eval-multi-v1.yaml

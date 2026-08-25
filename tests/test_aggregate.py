@@ -18,6 +18,7 @@ def record(
     dataset_sha="dataset-a",
     corpus_sha="corpus-a",
     prompt_sha="prompt-a",
+    corpus_name="northstar",
 ):
     return {
         "status": "completed",
@@ -29,6 +30,7 @@ def record(
         "prompt_sha256": prompt_sha,
         "dataset_sha256": dataset_sha,
         "corpus_sha256": corpus_sha,
+        "corpus_name": corpus_name,
         "tags": [tag],
         "required_documents": ["doc.a"],
         "result": {
@@ -84,6 +86,18 @@ def test_aggregate_reports_success_discovery_stopping_and_variability():
     assert "1" in summary["by_repeat"]
     assert summary["overall"]["std_document_reads"] > 0
 
+
+
+
+def test_aggregate_groups_cross_corpus_suites_by_corpus():
+    records = [
+        record("EVAL-001", 1, success=True, reads=1, wrong=0, after=0, corpus_name="northstar"),
+        record("TA-S-001", 1, success=True, reads=1, wrong=0, after=0, corpus_name="tell-aster"),
+    ]
+    summary = aggregate(records)
+    assert set(summary["by_corpus"]) == {"northstar", "tell-aster"}
+    text = render_markdown(summary)
+    assert "By corpus" in text
 
 def test_aggregate_exposes_errors_and_end_to_end_success_separately():
     records = [

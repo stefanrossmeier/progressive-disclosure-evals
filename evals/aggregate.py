@@ -189,6 +189,7 @@ def aggregate(records: list[dict[str, Any]]) -> dict[str, Any]:
         "errors_by_type": dict(
             sorted(Counter(str(r.get("error_type") or "unknown") for r in records if r.get("status") == "error").items())
         ),
+        "by_corpus": _group(records, lambda r: [str(r.get("corpus_name") or "unknown")]),
         "by_prompt_model": _group(
             records,
             lambda r: [f"{r.get('model')} :: {_prompt_label(r)}"],
@@ -378,6 +379,7 @@ def render_markdown(summary: dict[str, Any]) -> str:
             f"- {missing} record(s) predate artifact fingerprinting; provenance is incomplete for those trials."
         )
 
+    _append_group_section(lines, "By corpus", summary["by_corpus"])
     _append_group_section(lines, "Prompt × model comparison", summary["by_prompt_model"])
     _append_group_section(lines, "By prompt", summary["by_prompt"], include_efficiency=False)
     _append_group_section(lines, "By model", summary["by_model"], include_efficiency=False)

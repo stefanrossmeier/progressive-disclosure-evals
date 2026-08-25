@@ -21,35 +21,23 @@ def build_select_documents_tool(
         "name": "select_documents",
         "description": (
             "Plan and select the smallest complete evidence set needed to answer every requested output. "
-            "Preserve active/excluded routing qualifiers, but treat explicit question facts (region, product, "
-            "marker, level, stated prerequisite) as given rather than as facts that need documentary proof. "
-            "Create evidence_plan entries mapping each atomic requested fact or genuinely necessary dependency, "
-            "transformation, fallback, or precedence premise to the body expected to establish it. Select all "
-            "currently predictable necessary bodies now; do not defer an obvious second or third authority to a "
-            "later round. Preserve contrasts such as default/normal/base versus regional/effective/lower/actual. "
-            "Do not select a body solely to re-derive a supplied fact or prove that an excluded scope is absent. "
-            "The primary_document_id is the best first routing match and must also appear in the evidence plan. "
+            "Treat facts already supplied by the question as given. Create evidence_plan entries for each atomic "
+            "requested fact and each genuinely indispensable relationship or transformation needed to connect "
+            "those facts. Keep scope local to each evidence_plan need: make every need self-contained and preserve "
+            "the identifiers, names, locations, time references, negation, counterfactual conditions, and qualifiers "
+            "of the question clause that created it. `non-X` excludes X for that obligation; `without X` means "
+            "evaluate that obligation with X absent even if X applies elsewhere. Contrast words such as `instead`, "
+            "`whereas`, and `rather than` separate branches. Never import an identifier, process, scope, modifier, "
+            "or qualifier from another independent clause. Route from the metadata itself: prefer explicit entity "
+            "anchors and stated use conditions rather than assuming a fact belongs to a particular document family. "
+            "Select all currently predictable necessary bodies now. Do not select a body merely for corroboration, "
+            "background, topical similarity, or to re-derive a supplied fact. The primary_document_id is the best "
+            "first routing match and must also appear in the evidence plan. "
             f"Use no more than {max_documents} distinct documents."
         ),
         "parameters": {
             "type": "object",
             "properties": {
-                "active_qualifiers": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": (
-                        "Short routing qualifiers explicitly present in the question that still apply, "
-                        "such as a region, product, process, marker, or policy type."
-                    ),
-                },
-                "excluded_qualifiers": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": (
-                        "Short routing qualifiers explicitly negated by the question. Forms such as "
-                        "non-EU, not EU, or outside EU belong here, not in active_qualifiers."
-                    ),
-                },
                 "evidence_plan": {
                     "type": "array",
                     "minItems": 1,
@@ -59,8 +47,10 @@ def build_select_documents_tool(
                             "need": {
                                 "type": "string",
                                 "description": (
-                                    "The atomic fact, dependency, scope-establishment, or precedence "
-                                    "premise this document must establish."
+                                    "A self-contained atomic requested fact or indispensable relationship/"
+                                    "transformation this document must establish. Preserve the originating clause's "
+                                    "identifiers, negation, counterfactual condition, and local qualifiers. Do not "
+                                    "import modifiers from another independent clause."
                                 ),
                             },
                             "document_id": {
@@ -72,28 +62,23 @@ def build_select_documents_tool(
                         "additionalProperties": False,
                     },
                     "description": (
-                        "Evidence obligations mapped to the document that should establish each one. Use "
-                        "separate entries for distinct requested outputs and for transformations that genuinely "
-                        "require multiple authorities. Multiple obligations may map to the same document. Do not "
-                        "add an obligation merely to prove a case fact already stated in the question or the "
-                        "absence of an excluded scope."
+                        "Evidence obligations mapped to the document that should establish each one. Scope belongs "
+                        "inside each need rather than in a global qualifier list. Use separate entries for distinct "
+                        "requested outputs and indispensable bridges. Multiple obligations may map to the same "
+                        "document. Do not add an obligation merely for background, corroboration, or to prove a case "
+                        "fact already stated in the question."
                     ),
                 },
                 "primary_document_id": {
                     "type": "string",
                     "enum": ids,
                     "description": (
-                        "The most specific first document for the still-active scope. It must occur "
-                        "in evidence_plan."
+                        "The best first metadata routing match for the current evidence plan. It must occur in "
+                        "evidence_plan."
                     ),
                 },
             },
-            "required": [
-                "active_qualifiers",
-                "excluded_qualifiers",
-                "evidence_plan",
-                "primary_document_id",
-            ],
+            "required": ["evidence_plan", "primary_document_id"],
             "additionalProperties": False,
         },
         "strict": True,
@@ -118,7 +103,9 @@ def build_submit_answer_tool() -> dict[str, Any]:
                     "type": "string",
                     "description": (
                         "The complete concise final answer to the user's question. This field must contain "
-                        "the actual answer text and must never be empty."
+                        "the actual answer text and must never be empty. Document IDs, document titles, metadata labels, and "
+                        "routing-plan mappings are source labels, not substitutes for requested factual values unless "
+                        "the question explicitly asks for such a source identifier."
                     ),
                 },
             },
@@ -145,8 +132,8 @@ def build_request_more_evidence_tool() -> dict[str, Any]:
                 "missing_information": {
                     "type": "string",
                     "description": (
-                        "One precise missing fact or authority needed to complete the answer. This field "
-                        "must be specific and must never be empty."
+                        "One precise missing fact or indispensable relationship needed to complete the answer. "
+                        "This field must be specific and must never be empty."
                     ),
                 },
             },
