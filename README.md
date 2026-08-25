@@ -1,28 +1,36 @@
 # Progressive Disclosure Evals
 
-An eval-first implementation of **progressive disclosure for LLM knowledge retrieval**.
+An eval-first comparison of **progressive disclosure** and conventional **local RAG** for LLM knowledge retrieval.
 
-Instead of placing an entire knowledge base into the model context—or retrieving chunks with embeddings—the runtime first exposes a compact metadata map of the available documents. The model plans the evidence it needs, only those document bodies are disclosed, and the answer is grounded in the disclosed evidence.
+The primary runtime uses a compact metadata map instead of embedding search: the model plans the evidence it needs, only the selected document bodies are disclosed, and the answer is grounded in that evidence. The repository also includes dense and hybrid RAG baselines over the exact same corpora and eval datasets.
 
 ```text
-question + compact document metadata
-                ↓
-      atomic evidence plan
-                ↓
-   selected document bodies
-                ↓
-            answer
-                ↓
- bounded recovery when evidence is still missing
+Progressive disclosure
+question + document metadata
+        -> atomic evidence plan
+        -> selected document bodies
+        -> answer
+
+Local RAG
+question
+        -> dense or hybrid retrieval
+        -> top-K document chunks
+        -> answer
 ```
 
-The project asks a deliberately simple question:
+The project asks two practical questions:
 
-> **How far can a small, well-engineered progressive-disclosure system go without embeddings, a vector database, rerankers, or graph retrieval?**
+> **How far can a small progressive-disclosure system go without a vector database or retrieval framework?**
 
-## Current result
+> **When does conventional RAG provide a better production trade-off?**
 
-The latest complete benchmark is **V18 on `gpt-5-nano`**, with **180 single- and multi-document trials across two unrelated synthetic knowledge bases**.
+## Current results
+
+All results below use `gpt-5-nano` for answer generation and the same Northstar + Tell Aster evaluation sets.
+
+### Progressive disclosure V18
+
+The latest full progressive-disclosure benchmark contains **180 single- and multi-document trials across two unrelated synthetic knowledge bases**.
 
 | Benchmark | Trials | Strict E2E | Answer accuracy | Complete discovery | Mean bodies read |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -32,45 +40,62 @@ The latest complete benchmark is **V18 on `gpt-5-nano`**, with **180 single- and
 | Tell Aster — multi document | 40 | **95%** | 95% | 95% | 2.30 |
 | **Overall** | **180** | **95.6%** | **97.2%** | **95.6%** | **1.68** |
 
-Across the complete run:
+Across the full run, progressive disclosure loaded only **2.9% of corpus body content on average** and used **2.16 model calls per trial**.
 
-- **100% completion** — 180/180 trials completed without runtime errors.
-- **95.6% strict end-to-end success**.
-- **97.2% answer accuracy**.
-- **95.6% complete evidence discovery and attribution**.
-- **92.2% first-read hit rate**.
-- **86.9% mean document precision**.
-- **1.68 document bodies read on average**, with **p95 = 3**.
-- **2.16 model calls per trial on average**.
-- Only **2.9% of corpus body content** was loaded on average.
+### Local RAG comparison
 
-Strict E2E is intentionally stronger than answer accuracy: a trial passes only when the answer is correct **and** every benchmark-required evidence document is discovered and attributed.
+The repository contains two deliberately small local retrieval baselines using `BAAI/bge-small-en-v1.5`, top-6 retrieval, and the same answer model:
 
-The result is especially useful because the two corpora have very different information structures. Northstar is an enterprise/policy knowledge base; Tell Aster is an archaeological research archive. Tell Aster's evaluation data is kept outside the corpus so evaluator gold is never part of the runtime knowledge base.
+- **Dense RAG** — local embeddings + cosine similarity.
+- **Hybrid RAG** — dense retrieval + local BM25 + reciprocal-rank fusion.
+
+| System | Answer accuracy | Complete discovery | Answer + discovery | Mean docs represented | Corpus body loaded | Generation calls |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| **Progressive disclosure V18** | **97.2%** | 95.6% | 95.6% | **1.68** | **2.9%** | 2.16 |
+| Dense RAG K6 | 86.1% | 91.1% | 86.1% | 4.12 | 5.3% | **1.00** |
+| Hybrid RAG K6 | 96.1% | **98.3%** | **96.1%** | 4.40 | 5.5% | **1.00** |
+
+The result is not a simple winner/loser story:
+
+- Dense-only RAG is clearly weaker on these corpora, especially for genuine multi-document questions.
+- Adding BM25 changes the picture substantially: hybrid RAG reaches **98.3% complete document discovery** and **96.1% answer accuracy**.
+- Progressive disclosure remains much more selective, reading about **2.6× fewer documents** and roughly **half as much corpus body content**.
+- Hybrid RAG needs only **one generation call** per normal query because retrieval is local and deterministic.
+- On Tell Aster multi-document questions, progressive disclosure still has an answer-accuracy advantage: **95% vs 90%** for hybrid K6. This is where explicit evidence planning appears most useful.
+
+### A note on strict RAG E2E
+
+The current RAG reports also show a citation-strict E2E score of **81.1% for dense K6** and **91.1% for hybrid K6**. Those numbers are useful, but they are not directly symmetric with progressive disclosure.
+
+RAG currently requires the final answer call to explicitly cite every benchmark-required document. Progressive disclosure derives attribution from the model-authored evidence plan and does not ask the final answer call to reconstruct the source set again. For architecture comparison, this README therefore highlights **answer correctness + complete required-document discovery** alongside the raw citation-strict score.
+
+See [`docs/rag-comparison.md`](docs/rag-comparison.md) for the detailed breakdown and interpretation.
 
 ## Why progressive disclosure?
 
 LLM context is finite. More context is not automatically better context.
 
-The architecture therefore separates the knowledge base into two layers:
+The progressive-disclosure architecture separates the knowledge base into two layers:
 
-1. **Always-visible metadata** — document identity, description, activation hints, and other compact routing information.
+1. **Always-visible metadata** — document identity, description, activation hints, and compact routing information.
 2. **On-demand bodies** — detailed content disclosed only after the model identifies an evidence need.
 
 If disclosed evidence reveals a useful cross-reference but a fact is still missing, the runtime can use that discovery as a compact hint for bounded recovery. It does not automatically traverse every link or load the surrounding corpus.
 
-The successful path remains intentionally small:
+The normal path remains intentionally small:
 
 ```text
 metadata
-→ complete evidence plan
-→ selected bodies
-→ answer
+-> complete evidence plan
+-> selected bodies
+-> answer
 ```
+
+The RAG baselines provide a useful counterpoint: they avoid the planning call, but retrieve a wider top-K chunk set up front.
 
 ## Grounded in current agent guidance
 
-This design follows the same context-engineering direction described by Anthropic and OpenAI.
+The progressive-disclosure design follows the same context-engineering direction described by Anthropic and OpenAI.
 
 **Anthropic — Agent Skills**
 
@@ -118,22 +143,24 @@ Tell Aster contains **80 knowledge documents**. Its datasets and evaluator gold 
 corpus/        knowledge documents only
 datasets/      evaluation questions and evaluator-only gold
 prompts/       runtime prompts
-src/           progressive-disclosure runtime and evaluator
+src/           progressive-disclosure and local-RAG runtimes
 experiments/   benchmark configurations
-scripts/       validation and evaluation entry points
+scripts/       validation, indexing, retrieval, and evaluation entry points
 docs/          methodology and engineering guidance
 ```
 
-Evaluator ground truth—including required document IDs and expected answers—is never supplied to the runtime agent.
+Evaluator ground truth—including required document IDs and expected answers—is never supplied to either runtime.
 
 ## Run it
 
-Install the project dependencies, configure the model credentials expected by the repository, then run the deterministic checks:
+Install the core project and run deterministic checks:
 
 ```bash
 python -m pytest
 python scripts/check_all.py
 ```
+
+### Progressive disclosure
 
 Run the small verification suite:
 
@@ -150,24 +177,63 @@ python scripts/run_eval_suite.py \
   --runs 1
 ```
 
+### Local RAG
+
+Install the optional local retrieval stack:
+
+```bash
+pip install -r requirements-rag.txt
+```
+
+Build both indexes:
+
+```bash
+python scripts/build_rag_index.py \
+  --all \
+  --device mps
+```
+
+Run the retrieval-only checks before spending generation calls:
+
+```bash
+python scripts/run_rag_retrieval_eval.py \
+  --config experiments/rag/hybrid-northstar.yaml \
+  --device mps
+
+python scripts/run_rag_retrieval_eval.py \
+  --config experiments/rag/hybrid-tell-aster.yaml \
+  --device mps
+```
+
+Run the full hybrid benchmark:
+
+```bash
+python scripts/run_rag_suite.py \
+  --suite experiments/suites/rag-hybrid-all.yaml \
+  --device mps
+```
+
+See [`docs/rag-baselines.md`](docs/rag-baselines.md) for dense/hybrid configuration, offline operation, index details, and evaluation commands.
+
 ## Evaluation philosophy
 
-The benchmark separates several questions that are easy to conflate:
+The benchmark separates questions that are easy to conflate:
 
-- Did the model find the right evidence?
-- Did it find the evidence early?
-- Did it load unnecessary documents?
-- Could it answer correctly from the evidence it had?
-- Did it attribute every required source?
-- Did it stop once the evidence was sufficient?
+- Did retrieval find every required source?
+- Did it retrieve the actual answer-bearing evidence, not merely the right document?
+- Did it load unnecessary material?
+- Could the answer model use the supplied evidence correctly?
+- Was attribution complete?
+- How many model calls and how much corpus content were required?
 
-This matters because a correct-looking answer is not enough for evidence-grounded retrieval, while a retrieval miss should not automatically be misdiagnosed as an answering failure.
+A correct-looking answer is not enough for evidence-grounded retrieval, while a retrieval miss should not automatically be diagnosed as an answering failure.
 
-The repository therefore reports both **strict end-to-end success** and **answer accuracy**, together with discovery, attribution, first-read hit rate, document precision, model calls, and knowledge fraction loaded.
+The repository therefore reports answer accuracy, complete discovery, attribution, document precision, model calls, and knowledge fraction loaded in addition to end-to-end success.
 
 ## More detail
 
-- [`docs/methodology.md`](docs/methodology.md) — evaluation design and metrics
+- [`docs/methodology.md`](docs/methodology.md) — evaluation design and metric semantics
 - [`docs/how-to-corpus-metadata.md`](docs/how-to-corpus-metadata.md) — how to design discoverable corpus metadata
 - [`docs/how-to-progressive-disclosure-runtime.md`](docs/how-to-progressive-disclosure-runtime.md) — runtime design and evidence-planning rules
-- [`docs/rag-baselines.md`](docs/rag-baselines.md) — local dense/hybrid RAG architecture, indexing, evaluation, and comparison workflow
+- [`docs/rag-baselines.md`](docs/rag-baselines.md) — local dense/hybrid RAG architecture, indexing, and commands
+- [`docs/rag-comparison.md`](docs/rag-comparison.md) — measured dense/hybrid/progressive-disclosure comparison

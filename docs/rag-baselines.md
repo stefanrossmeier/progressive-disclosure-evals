@@ -410,3 +410,28 @@ The initial RAG comparison does not include:
 - LangChain/LlamaIndex abstractions.
 
 The point is to establish what a small, inspectable dense or hybrid RAG system achieves before attributing gains to a more complicated retrieval stack.
+
+## Measured baseline results
+
+The first complete dense and hybrid K6 runs are documented in [`rag-comparison.md`](rag-comparison.md).
+
+Headline results over the shared 180-case benchmark:
+
+| System | Answer accuracy | Complete discovery | Answer + discovery | Mean docs | Knowledge loaded | Generation calls |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Dense RAG K6 | 86.1% | 91.1% | 86.1% | 4.12 | 5.3% | 1.00 |
+| Hybrid RAG K6 | **96.1%** | **98.3%** | **96.1%** | 4.40 | 5.5% | 1.00 |
+
+Hybrid retrieval is therefore the meaningful conventional-RAG baseline for this repository. Dense-only retrieval remains useful as an ablation showing how much exact lexical matching contributes.
+
+### Attribution comparability warning
+
+The RAG result files also report citation-strict E2E values of 81.1% (dense) and 91.1% (hybrid). The current RAG answer tool must explicitly emit every required source ID. Progressive disclosure derives attribution from its earlier evidence plan instead.
+
+Do not compare those raw RAG citation-strict values to progressive disclosure without stating this asymmetry. For the common retrieval+answer question, report **answer correctness + complete required-document discovery** as well.
+
+### Chunk evidence coverage
+
+`complete_discovery` currently means that at least one retrieved chunk belongs to every required document. It does **not** prove that the retrieved chunks contain every answer-bearing passage from those documents.
+
+This distinction matters for chunk RAG and should be considered when debugging a case classified as an answer/application failure. Inspect the actual top-K excerpts before deciding that the answer model failed despite sufficient evidence.
