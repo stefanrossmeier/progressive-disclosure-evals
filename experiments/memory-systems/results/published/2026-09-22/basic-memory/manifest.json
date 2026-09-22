@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "experiment_name": "memory-system-basic-memory",
+  "backend": "basic-memory",
+  "top_k_documents": 6,
+  "provider_hit_limit": 24,
+  "answer_model": "gpt-5-nano",
+  "answer_prompt": "prompts/rag/system-v1.md",
+  "answer_prompt_sha256": "f103160732c9cae71f0fc964e9aa3a0154069a26573f202bdb6fd6ad744029d9",
+  "datasets": {
+    "northstar": "datasets/eval-v1.yaml",
+    "tell-aster": "datasets/tell-aster-eval-v2.yaml"
+  },
+  "memory_snapshots": {
+    "northstar": {
+      "path": "experiments/memory-systems/basic-memory/memory/northstar",
+      "sha256": "5320fca15fb983028dd07b514aea53c4dceabce4cc0ceb2f651ac46be6a33d26"
+    },
+    "tell-aster": {
+      "path": "experiments/memory-systems/basic-memory/memory/tell-aster",
+      "sha256": "c96094efef4fffb67ed9318a1da18fb35d8ddcbad694b31b493c33eb590789a7"
+    }
+  },
+  "ingest_markers": {
+    "northstar": {
+      "schema_version": 1,
+      "backend": "basic-memory",
+      "corpus": "northstar",
+      "memory_sha256": "5320fca15fb983028dd07b514aea53c4dceabce4cc0ceb2f651ac46be6a33d26",
+      "provider_version": "0.23.2",
+      "ingest": {
+        "ok": true,
+        "backend": "basic-memory",
+        "provider_version": "0.23.2",
+        "documents": 40,
+        "elapsed_ms": 15597.97420797986,
+        "project": "memory-eval-northstar",
+        "metadata": {
+          "source_of_truth": "markdown",
+          "reindex_stdout_tail": "\nProject: memory-eval-northstar\n  Rebuilding full-text search index (project index)...\n  project index: 40 observed, 40 indexed, 0 deleted, 1 batches\n  0 stale search rows purged\n  done Full-text search index rebuilt\n  Building vector embeddings (incremental sync)...\n    Embedding entities... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100%\n  done Embeddings complete (index=sqlite-vec, \nmodel=FastEmbedEmbeddingProvider:bge-small-en-v1.5:384): 40 entities embedded, 0\nskipped, 0 errors\n\nReindex complete!\n",
+          "reindex_stderr_tail": "\nFetching 5 files:   0%|          | 0/5 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n\nFetching 5 files:  20%|██        | 1/5 [00:00<00:01,  3.85it/s]\nFetching 5 files:  40%|████      | 2/5 [00:00<00:00,  4.70it/s]\nFetching 5 files: 100%|██████████| 5/5 [00:03<00:00,  1.41it/s]\nFetching 5 files: 100%|██████████| 5/5 [00:03<00:00,  1.58it/s]\n"
+        },
+        "harness_elapsed_seconds": 15.599440624995623
+      },
+      "created_at": "2026-09-22T16:15:25.813803+00:00"
+    },
+    "tell-aster": {
+      "schema_version": 1,
+      "backend": "basic-memory",
+      "corpus": "tell-aster",
+      "memory_sha256": "c96094efef4fffb67ed9318a1da18fb35d8ddcbad694b31b493c33eb590789a7",
+      "provider_version": "0.23.2",
+      "ingest": {
+        "ok": true,
+        "backend": "basic-memory",
+        "provider_version": "0.23.2",
+        "documents": 80,
+        "elapsed_ms": 17886.987250007223,
+        "project": "memory-eval-tell-aster",
+        "metadata": {
+          "source_of_truth": "markdown",
+          "reindex_stdout_tail": "\nProject: memory-eval-tell-aster\n  Rebuilding full-text search index (project index)...\n  project index: 80 observed, 80 indexed, 0 deleted, 1 batches\n  0 stale search rows purged\n  done Full-text search index rebuilt\n  Building vector embeddings (incremental sync)...\n    Embedding entities... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100%\n  done Embeddings complete (index=sqlite-vec, \nmodel=FastEmbedEmbeddingProvider:bge-small-en-v1.5:384): 80 entities embedded, 0\nskipped, 0 errors\n\nReindex complete!\n",
+          "reindex_stderr_tail": ""
+        },
+        "harness_elapsed_seconds": 17.888001666986383
+      },
+      "created_at": "2026-09-22T16:15:43.705153+00:00"
+    }
+  },
+  "created_at": "2026-09-22T17:43:12.573627+00:00"
+}

@@ -1,0 +1,28 @@
+{
+  "backends": {
+    "basic-memory": {
+      "published_cases": 180,
+      "published_cases_sha256": "9ce2c515885d610945cf7dba50e76e93b277c34f558dc7f590759cd3d90941b2",
+      "raw_trials_bytes": 31568732,
+      "raw_trials_file": "trials.jsonl",
+      "raw_trials_sha256": "b4cb2839ed2e32e3076651e3ff03b6e0384ad4af4251315a59e6995df1aa9dfb"
+    },
+    "hindsight": {
+      "published_cases": 180,
+      "published_cases_sha256": "44b7adf7b86ff708275cff848b5e06738eadeb815b85af90e7979f9fca39f143",
+      "raw_trials_bytes": 5871870,
+      "raw_trials_file": "trials.jsonl",
+      "raw_trials_sha256": "c0d17124f3cdfdcb97a458adb28a58b481d19c83f91b6cb8c460c57e635c974e"
+    },
+    "openviking": {
+      "published_cases": 180,
+      "published_cases_sha256": "86372cc55ebb29660feb8dd198b7a10706352a138ecdf94ff0fe1b739b2000f2",
+      "raw_trials_bytes": 9835416,
+      "raw_trials_file": "trials.jsonl",
+      "raw_trials_sha256": "00ae7fe6bd3b81042cbe0a37726cae400f87c288ba9a42eab14532957734d41f"
+    }
+  },
+  "note": "Raw trials.jsonl files are not committed because provider hits repeat large source payloads. cases.jsonl preserves normalized per-case outcomes and retrieval mappings; SHA-256 values below identify the exact raw trial files from which the snapshot was derived.",
+  "schema_version": 1,
+  "source_run_directory": "20260922T174312288239Z"
+}

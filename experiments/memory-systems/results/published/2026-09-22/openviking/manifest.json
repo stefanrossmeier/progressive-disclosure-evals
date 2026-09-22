@@ -1,0 +1,675 @@
+{
+  "schema_version": 1,
+  "experiment_name": "memory-system-openviking",
+  "backend": "openviking",
+  "top_k_documents": 6,
+  "provider_hit_limit": 24,
+  "answer_model": "gpt-5-nano",
+  "answer_prompt": "prompts/rag/system-v1.md",
+  "answer_prompt_sha256": "f103160732c9cae71f0fc964e9aa3a0154069a26573f202bdb6fd6ad744029d9",
+  "datasets": {
+    "northstar": "datasets/eval-v1.yaml",
+    "tell-aster": "datasets/tell-aster-eval-v2.yaml"
+  },
+  "memory_snapshots": {
+    "northstar": {
+      "path": "experiments/memory-systems/openviking/memory/northstar",
+      "sha256": "b5839cbed3424ff9e59ad5fb2b089b83764c2069c464ac5a15c7dfef85da6242"
+    },
+    "tell-aster": {
+      "path": "experiments/memory-systems/openviking/memory/tell-aster",
+      "sha256": "ba849c1b291628c816ec5897d62fb90fe838c2882e272ce748b6dcde77f0709b"
+    }
+  },
+  "ingest_markers": {
+    "northstar": {
+      "schema_version": 1,
+      "backend": "openviking",
+      "corpus": "northstar",
+      "memory_sha256": "b5839cbed3424ff9e59ad5fb2b089b83764c2069c464ac5a15c7dfef85da6242",
+      "provider_version": "0.4.21",
+      "ingest": {
+        "ok": true,
+        "backend": "openviking",
+        "provider_version": "0.4.21",
+        "sdk_version": "0.1.12",
+        "documents": 40,
+        "elapsed_ms": 39181.57254200196,
+        "target_uri": "viking://resources/memory-eval/northstar/",
+        "metadata": {
+          "processing_mode": "semantic_and_vectors",
+          "parse_mode": "no_split",
+          "add_resource_result": {
+            "status": "success",
+            "errors": [],
+            "source_path": "northstar",
+            "meta": {
+              "file_count": 40,
+              "dir_name": "northstar",
+              "total_processable": 40,
+              "processed_files": [
+                {
+                  "path": "commercial/billing/credits/migration.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "commercial/billing/credits/outage.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "commercial/billing/disputes/chargebacks.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "commercial/billing/disputes/invoice-disputes.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "commercial/billing/refunds/exceptions.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "commercial/billing/refunds/standard.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "commercial/contracts/enterprise/approvals.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "commercial/contracts/enterprise/renewals.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "commercial/contracts/partner/approvals.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "commercial/contracts/partner/exceptions.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "governance/regions/apac/billing-overrides.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "governance/regions/apac/data-handling.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "governance/regions/eu/billing-overrides.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "governance/regions/eu/data-handling.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "governance/regions/us/billing-overrides.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "governance/regions/us/data-handling.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "governance/security/credentials/emergency-access.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "governance/security/credentials/rotation.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "governance/security/exports/approval.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "governance/security/exports/retention.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "operations/incidents/communication/customer-notification.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "operations/incidents/communication/executive-notification.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "operations/incidents/escalation/paging.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "operations/incidents/escalation/routing.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "operations/incidents/severity/classification.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "operations/incidents/severity/overrides.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "operations/maintenance/emergency/authorization.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "operations/maintenance/emergency/rollback.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "operations/maintenance/scheduled/approvals.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "operations/maintenance/scheduled/windows.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "platform/infrastructure/compute/quotas.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "platform/infrastructure/compute/tiers.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "platform/infrastructure/storage/classes.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "platform/infrastructure/storage/retention.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "platform/products/atlas/limits.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "platform/products/atlas/ownership.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "platform/products/nova/limits.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "platform/products/nova/ownership.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "platform/products/zephyr/limits.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "platform/products/zephyr/ownership.md",
+                  "parser": "MarkdownParser"
+                }
+              ],
+              "failed_files": [],
+              "unsupported_files": [],
+              "skipped_files": []
+            },
+            "root_uri": "viking://resources/memory-eval/northstar",
+            "temp_uri": "viking://temp/default/09221841_ab393b/northstar",
+            "queue_status": {
+              "Semantic": {
+                "processed": 1,
+                "requeue_count": 0,
+                "error_count": 0,
+                "errors": []
+              },
+              "Embedding": {
+                "processed": 106,
+                "requeue_count": 0,
+                "error_count": 0,
+                "errors": []
+              }
+            },
+            "context_count": 106,
+            "usage": {
+              "tokens": {
+                "total": 169306,
+                "llm": {
+                  "input": 77122,
+                  "output": 47729,
+                  "total": 124851,
+                  "completion_reasoning": 11648
+                },
+                "embedding": {
+                  "total": 44455
+                },
+                "stages": {
+                  "resource_summarize": {
+                    "llm": {
+                      "input": 77122,
+                      "output": 47729,
+                      "total": 124851,
+                      "completion_reasoning": 11648
+                    }
+                  },
+                  "embed_resource": {
+                    "embedding": {
+                      "total": 44455
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "server_log_tail": "2026-09-22 18:41:54,961 - openviking.server.auth.plugins.ldap - WARNING - LDAP library not available. LDAP authentication will not work. Install with: uv pip install python-ldap\nOpenViking HTTP Server is running on 127.0.0.1:19331\n2026-09-22 18:41:55.343 | INFO     | openviking.telemetry.tracer:init_tracer_from_server_config:233 - [TRACER] disabled in server.observability.traces\n[09/22/26 18:41:55] INFO     StreamableHTTP       streamable_http_manager.py:164\n                             session manager                                    \n                             started                                            \n2026-09-22 18:41:56,056 - openviking - WARNING - [request_id=8a25754b-b656-427e-ac16-180731ea8738] Aggregation results not available: extra_json is empty\n"
+        },
+        "harness_elapsed_seconds": 47.97176658399985
+      },
+      "created_at": "2026-09-22T16:42:35.261797+00:00"
+    },
+    "tell-aster": {
+      "schema_version": 1,
+      "backend": "openviking",
+      "corpus": "tell-aster",
+      "memory_sha256": "ba849c1b291628c816ec5897d62fb90fe838c2882e272ce748b6dcde77f0709b",
+      "provider_version": "0.4.21",
+      "ingest": {
+        "ok": true,
+        "backend": "openviking",
+        "provider_version": "0.4.21",
+        "sdk_version": "0.1.12",
+        "documents": 80,
+        "elapsed_ms": 55914.350666018436,
+        "target_uri": "viking://resources/memory-eval/tell-aster/",
+        "metadata": {
+          "processing_mode": "semantic_and_vectors",
+          "parse_mode": "no_split",
+          "add_resource_result": {
+            "status": "success",
+            "errors": [],
+            "source_path": "tell-aster",
+            "meta": {
+              "file_count": 80,
+              "dir_name": "tell-aster",
+              "total_processable": 80,
+              "processed_files": [
+                {
+                  "path": "architecture/ta-arc-01.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "architecture/ta-arc-02.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "architecture/ta-arc-03.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "architecture/ta-arc-04.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "architecture/ta-arc-05.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "architecture/ta-arc-06.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "architecture/ta-arc-07.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "architecture/ta-arc-08.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "artifacts/ta-art-01.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "artifacts/ta-art-02.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "artifacts/ta-art-03.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "artifacts/ta-art-04.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "artifacts/ta-art-05.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "artifacts/ta-art-06.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "artifacts/ta-art-07.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "burials/ta-bur-01.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "burials/ta-bur-02.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "burials/ta-bur-03.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "burials/ta-bur-04.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "burials/ta-bur-05.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "burials/ta-bur-06.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "burials/ta-bur-07.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "ceramics/ta-cer-01.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "ceramics/ta-cer-02.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "ceramics/ta-cer-03.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "ceramics/ta-cer-04.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "ceramics/ta-cer-05.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "ceramics/ta-cer-06.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "ceramics/ta-cer-07.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "ceramics/ta-cer-08.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "conservation/ta-con-01.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "conservation/ta-con-02.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "conservation/ta-con-03.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "conservation/ta-con-04.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "conservation/ta-con-05.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "conservation/ta-con-06.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "dating/ta-dat-01.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "dating/ta-dat-02.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "dating/ta-dat-03.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "dating/ta-dat-04.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "dating/ta-dat-05.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "dating/ta-dat-06.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "dating/ta-dat-07.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "environment/ta-env-01.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "environment/ta-env-02.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "environment/ta-env-03.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "environment/ta-env-04.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "environment/ta-env-05.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "environment/ta-env-06.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "environment/ta-env-07.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "excavation/ta-exc-01.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "excavation/ta-exc-02.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "excavation/ta-exc-03.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "excavation/ta-exc-04.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "excavation/ta-exc-05.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "excavation/ta-exc-06.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "excavation/ta-exc-07.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "excavation/ta-exc-08.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "excavation/ta-exc-09.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "excavation/ta-exc-10.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "inscriptions/ta-ins-01.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "inscriptions/ta-ins-02.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "inscriptions/ta-ins-03.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "inscriptions/ta-ins-04.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "inscriptions/ta-ins-05.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "inscriptions/ta-ins-06.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "inscriptions/ta-ins-07.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "survey/ta-sur-01.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "survey/ta-sur-02.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "survey/ta-sur-03.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "survey/ta-sur-04.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "survey/ta-sur-05.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "survey/ta-sur-06.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "synthesis/ta-syn-01.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "synthesis/ta-syn-02.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "synthesis/ta-syn-03.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "synthesis/ta-syn-04.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "synthesis/ta-syn-05.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "synthesis/ta-syn-06.md",
+                  "parser": "MarkdownParser"
+                },
+                {
+                  "path": "synthesis/ta-syn-07.md",
+                  "parser": "MarkdownParser"
+                }
+              ],
+              "failed_files": [],
+              "unsupported_files": [],
+              "skipped_files": []
+            },
+            "root_uri": "viking://resources/memory-eval/tell-aster",
+            "temp_uri": "viking://temp/default/09221842_a185be/tell-aster",
+            "queue_status": {
+              "Semantic": {
+                "processed": 1,
+                "requeue_count": 0,
+                "error_count": 0,
+                "errors": []
+              },
+              "Embedding": {
+                "processed": 104,
+                "requeue_count": 0,
+                "error_count": 0,
+                "errors": []
+              }
+            },
+            "context_count": 104,
+            "usage": {
+              "tokens": {
+                "total": 355757,
+                "llm": {
+                  "input": 174087,
+                  "output": 60129,
+                  "total": 234216,
+                  "completion_reasoning": 11776
+                },
+                "embedding": {
+                  "total": 121541
+                },
+                "stages": {
+                  "resource_summarize": {
+                    "llm": {
+                      "input": 174087,
+                      "output": 60129,
+                      "total": 234216,
+                      "completion_reasoning": 11776
+                    }
+                  },
+                  "embed_resource": {
+                    "embedding": {
+                      "total": 121541
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "server_log_tail": "2026-09-22 18:41:54,961 - openviking.server.auth.plugins.ldap - WARNING - LDAP library not available. LDAP authentication will not work. Install with: uv pip install python-ldap\nOpenViking HTTP Server is running on 127.0.0.1:19331\n2026-09-22 18:41:55.343 | INFO     | openviking.telemetry.tracer:init_tracer_from_server_config:233 - [TRACER] disabled in server.observability.traces\n[09/22/26 18:41:55] INFO     StreamableHTTP       streamable_http_manager.py:164\n                             session manager                                    \n                             started                                            \n2026-09-22 18:41:56,056 - openviking - WARNING - [request_id=8a25754b-b656-427e-ac16-180731ea8738] Aggregation results not available: extra_json is empty\n"
+        },
+        "harness_elapsed_seconds": 55.93894733299385
+      },
+      "created_at": "2026-09-22T16:43:31.206469+00:00"
+    }
+  },
+  "created_at": "2026-09-22T18:04:13.824202+00:00"
+}
