@@ -1,0 +1,12 @@
+.venvs/
+.tools/
+ai-memory/memory/
+ai-memory/runtime/
+everos/memory/
+everos/runtime/
+agent-memory/memory/
+agent-memory/runtime/
+results/*
+!results/.gitkeep
+!results/published/
+!results/published/**

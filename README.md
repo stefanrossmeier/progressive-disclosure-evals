@@ -209,6 +209,12 @@ The Qwen models remain useful components for controlled ablations; the measured 
 
 See [`docs/approach-selection.md`](docs/approach-selection.md) for the detailed decision record.
 
+### Markdown-native memory systems
+
+A separate pair of memory-system bakeoffs now evaluates whether the same retrieval quality can be achieved while keeping **Git + Markdown as canonical memory**. The final valid Phase-2 runs reach **96.7% Answer + discovery with agent-memory** and **96.1% with ai-memory**, with both systems perfect on the 120 single-document cases. The remaining weakness is multi-document evidence composition, not basic lookup.
+
+The current memory direction is to freeze those retrieval adapters and compare **memory formation/lifecycle behavior** next rather than continue tuning the known 180 questions. See [`docs/markdown-memory-systems-evaluation-2026-09-23.md`](docs/markdown-memory-systems-evaluation-2026-09-23.md).
+
 ## Evaluation caveat
 
 Northstar and Tell Aster have both participated in development. They are now best treated as development/validation corpora, not untouched evidence of universal production reliability.

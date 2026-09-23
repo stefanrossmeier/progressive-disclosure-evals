@@ -205,3 +205,24 @@ With limited optimization budget, use this order:
 6. Evaluate them unchanged on a **third untouched corpus**.
 
 The third corpus is more valuable than squeezing another few points from Northstar or Tell Aster, because both current corpora are now development data.
+
+## Memory-system update — 2026-09-23
+
+A second memory-system bakeoff tested two valid Markdown-canonical finalists on the same 180-case answer/discovery boundary:
+
+| System | Answer | Discovery | Answer + discovery | Single-doc A+D | Multi-doc A+D | Mean docs |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| **agent-memory** | 98.3% | 97.8% | **96.7%** | **100.0%** | 90.0% | 6.00 |
+| **ai-memory** | **98.9%** | 97.2% | 96.1% | **100.0%** | 88.3% | 6.00 |
+| Hybrid RAG K6 | 96.1% | **98.3%** | 96.1% | 97.5% | **93.3%** | 4.40 |
+| Progressive Disclosure V18 | 97.2% | 95.6% | 95.6% | 96.7% | **93.3%** | **1.68** |
+
+This changes the memory architecture decision. Strong retrieval no longer requires accepting a database-first canonical store: both new finalists keep Markdown/files as durable truth and match or exceed the aggregate A+D result of the existing retrieval finalists on these development corpora.
+
+It does **not** replace the V18/Hybrid read-side conclusion. The new systems are perfect on single-document cases but remain weaker on multi-document composition, and both consume the fixed six-full-document budget. The likely architecture is therefore a Markdown-native memory layer with cheap native recall and an explicit evidence-planning fallback for hard compound queries.
+
+The next decision-driving work is no longer another static-retrieval branch. Freeze the ai-memory and agent-memory retrieval adapters and run a memory-lifecycle benchmark covering extraction, consolidation, supersession, contradictions, provenance, human edits, and destructive rebuild from Markdown. agent-memory is the current architectural lead; ai-memory remains a full finalist because its retrieval is similarly strong and its packaged release/runtime path is more mature.
+
+EverOS is not included in the final full-run comparison because its Tell Aster keyword path did not produce valid provider hits in the final smoke probe. Its core remains Apache-2.0, but separately licensed repository assets also make packaging hygiene important.
+
+See `docs/markdown-memory-systems-evaluation-2026-09-23.md` for the complete cross-experiment record and direction.

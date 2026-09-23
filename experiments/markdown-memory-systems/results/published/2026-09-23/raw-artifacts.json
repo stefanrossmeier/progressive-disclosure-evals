@@ -1,0 +1,16 @@
+{
+  "note": "Raw provider-hit-heavy trials are intentionally not committed. The final aggregate reports, manifests, and A+D failure records are retained here.",
+  "schema_version": 1,
+  "source_runs": {
+    "agent-memory": {
+      "run": "20260923T155141275179Z",
+      "trials_bytes": 4722597,
+      "trials_sha256": "210c24c69ce7d2a2fb2b6ae42706d4ff52a70aaff6274d2f00696eb6451e5db1"
+    },
+    "ai-memory": {
+      "run": "20260923T154221737333Z",
+      "trials_bytes": 3295891,
+      "trials_sha256": "100d61f39724f8fd8f812ef7e35fd706460e1f66bd4402b5b37a21bd755ad989"
+    }
+  }
+}

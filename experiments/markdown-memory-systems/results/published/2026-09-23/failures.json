@@ -1,0 +1,361 @@
+{
+  "agent-memory": [
+    {
+      "answer_and_discovery": false,
+      "answer_correct": true,
+      "attribution_complete": false,
+      "case_id": "EVAL-042",
+      "complete_discovery": false,
+      "corpus_name": "northstar",
+      "opened_documents": [
+        "governance.regions.us.data-handling",
+        "platform.infrastructure.compute.quotas",
+        "platform.infrastructure.compute.tiers",
+        "governance.regions.apac.data-handling",
+        "platform.infrastructure.storage.classes",
+        "governance.regions.eu.data-handling"
+      ],
+      "required_documents": [
+        "platform.products.nova.limits",
+        "platform.infrastructure.compute.quotas",
+        "governance.regions.us.data-handling"
+      ],
+      "tags": [
+        "multi_doc",
+        "composition",
+        "us",
+        "platform",
+        "compute"
+      ]
+    },
+    {
+      "answer_and_discovery": false,
+      "answer_correct": false,
+      "attribution_complete": false,
+      "case_id": "EVAL-043",
+      "complete_discovery": false,
+      "corpus_name": "northstar",
+      "opened_documents": [
+        "governance.regions.us.data-handling",
+        "platform.infrastructure.compute.quotas",
+        "governance.regions.eu.data-handling",
+        "platform.infrastructure.compute.tiers",
+        "platform.infrastructure.storage.classes",
+        "governance.regions.apac.data-handling"
+      ],
+      "required_documents": [
+        "platform.products.zephyr.limits",
+        "platform.infrastructure.compute.quotas",
+        "governance.regions.eu.data-handling"
+      ],
+      "tags": [
+        "multi_doc",
+        "composition",
+        "eu",
+        "platform",
+        "compute"
+      ]
+    },
+    {
+      "answer_and_discovery": false,
+      "answer_correct": true,
+      "attribution_complete": false,
+      "case_id": "EVAL-044",
+      "complete_discovery": false,
+      "corpus_name": "northstar",
+      "opened_documents": [
+        "governance.regions.us.data-handling",
+        "platform.infrastructure.compute.quotas",
+        "governance.regions.apac.data-handling",
+        "governance.regions.eu.data-handling",
+        "platform.infrastructure.compute.tiers",
+        "platform.infrastructure.storage.classes"
+      ],
+      "required_documents": [
+        "platform.products.atlas.limits",
+        "platform.infrastructure.compute.quotas",
+        "governance.regions.apac.data-handling"
+      ],
+      "tags": [
+        "multi_doc",
+        "composition",
+        "apac",
+        "platform",
+        "compute"
+      ]
+    },
+    {
+      "answer_and_discovery": false,
+      "answer_correct": true,
+      "attribution_complete": false,
+      "case_id": "EVAL-045",
+      "complete_discovery": false,
+      "corpus_name": "northstar",
+      "opened_documents": [
+        "governance.regions.eu.data-handling",
+        "governance.regions.us.data-handling",
+        "platform.infrastructure.storage.classes",
+        "platform.infrastructure.storage.retention",
+        "governance.regions.apac.data-handling",
+        "governance.regions.apac.billing-overrides"
+      ],
+      "required_documents": [
+        "platform.products.zephyr.limits",
+        "governance.regions.apac.data-handling",
+        "platform.infrastructure.storage.retention"
+      ],
+      "tags": [
+        "multi_doc",
+        "composition",
+        "apac",
+        "platform",
+        "storage"
+      ]
+    },
+    {
+      "answer_and_discovery": false,
+      "answer_correct": false,
+      "attribution_complete": false,
+      "case_id": "TA-M-015",
+      "complete_discovery": true,
+      "corpus_name": "tell-aster",
+      "opened_documents": [
+        "TA-ARC-07",
+        "TA-ENV-06",
+        "TA-ARC-01",
+        "TA-ARC-02",
+        "TA-ARC-03",
+        "TA-ARC-04"
+      ],
+      "required_documents": [
+        "TA-ENV-06",
+        "TA-ARC-07"
+      ],
+      "tags": [
+        "multi_doc",
+        "environment",
+        "spatial_analysis",
+        "interpretation"
+      ]
+    },
+    {
+      "answer_and_discovery": false,
+      "answer_correct": false,
+      "attribution_complete": true,
+      "case_id": "TA-M-025",
+      "complete_discovery": true,
+      "corpus_name": "tell-aster",
+      "opened_documents": [
+        "TA-ART-01",
+        "TA-ENV-07",
+        "TA-EXC-05",
+        "TA-SUR-03",
+        "TA-ARC-01",
+        "TA-EXC-08"
+      ],
+      "required_documents": [
+        "TA-ART-01",
+        "TA-ENV-07"
+      ],
+      "tags": [
+        "multi_doc",
+        "artifact_material",
+        "conservation"
+      ]
+    }
+  ],
+  "ai-memory": [
+    {
+      "answer_and_discovery": false,
+      "answer_correct": true,
+      "attribution_complete": false,
+      "case_id": "EVAL-041",
+      "complete_discovery": false,
+      "corpus_name": "northstar",
+      "opened_documents": [
+        "governance.regions.eu.data-handling",
+        "platform.infrastructure.storage.classes",
+        "platform.infrastructure.storage.retention",
+        "platform.products.zephyr.limits",
+        "governance.regions.us.data-handling",
+        "operations.maintenance.scheduled.approvals"
+      ],
+      "required_documents": [
+        "platform.products.atlas.limits",
+        "governance.regions.eu.data-handling",
+        "platform.infrastructure.storage.retention"
+      ],
+      "tags": [
+        "multi_doc",
+        "composition",
+        "eu",
+        "platform",
+        "storage"
+      ]
+    },
+    {
+      "answer_and_discovery": false,
+      "answer_correct": true,
+      "attribution_complete": false,
+      "case_id": "EVAL-044",
+      "complete_discovery": false,
+      "corpus_name": "northstar",
+      "opened_documents": [
+        "platform.infrastructure.compute.quotas",
+        "governance.regions.apac.data-handling",
+        "platform.infrastructure.storage.classes",
+        "platform.infrastructure.compute.tiers",
+        "governance.regions.us.data-handling",
+        "platform.products.nova.limits"
+      ],
+      "required_documents": [
+        "platform.products.atlas.limits",
+        "platform.infrastructure.compute.quotas",
+        "governance.regions.apac.data-handling"
+      ],
+      "tags": [
+        "multi_doc",
+        "composition",
+        "apac",
+        "platform",
+        "compute"
+      ]
+    },
+    {
+      "answer_and_discovery": false,
+      "answer_correct": true,
+      "attribution_complete": false,
+      "case_id": "EVAL-045",
+      "complete_discovery": false,
+      "corpus_name": "northstar",
+      "opened_documents": [
+        "governance.regions.eu.data-handling",
+        "platform.infrastructure.storage.classes",
+        "platform.infrastructure.storage.retention",
+        "governance.regions.us.data-handling",
+        "governance.regions.apac.data-handling",
+        "operations.incidents.escalation.routing"
+      ],
+      "required_documents": [
+        "platform.products.zephyr.limits",
+        "governance.regions.apac.data-handling",
+        "platform.infrastructure.storage.retention"
+      ],
+      "tags": [
+        "multi_doc",
+        "composition",
+        "apac",
+        "platform",
+        "storage"
+      ]
+    },
+    {
+      "answer_and_discovery": false,
+      "answer_correct": true,
+      "attribution_complete": false,
+      "case_id": "EVAL-052",
+      "complete_discovery": false,
+      "corpus_name": "northstar",
+      "opened_documents": [
+        "operations.incidents.severity.classification",
+        "operations.incidents.communication.executive-notification",
+        "operations.incidents.escalation.routing",
+        "operations.incidents.severity.overrides",
+        "commercial.billing.credits.outage",
+        "governance.regions.eu.billing-overrides"
+      ],
+      "required_documents": [
+        "operations.incidents.severity.classification",
+        "operations.incidents.escalation.routing",
+        "governance.regions.eu.data-handling"
+      ],
+      "tags": [
+        "multi_doc",
+        "precedence",
+        "eu",
+        "operations",
+        "incident"
+      ]
+    },
+    {
+      "answer_and_discovery": false,
+      "answer_correct": true,
+      "attribution_complete": false,
+      "case_id": "EVAL-058",
+      "complete_discovery": false,
+      "corpus_name": "northstar",
+      "opened_documents": [
+        "governance.security.exports.approval",
+        "governance.regions.us.data-handling",
+        "platform.infrastructure.storage.classes",
+        "governance.security.exports.retention",
+        "platform.products.nova.limits",
+        "platform.products.atlas.limits"
+      ],
+      "required_documents": [
+        "governance.security.exports.approval",
+        "platform.products.zephyr.limits",
+        "governance.regions.us.data-handling"
+      ],
+      "tags": [
+        "multi_doc",
+        "composition",
+        "us",
+        "security",
+        "exports"
+      ]
+    },
+    {
+      "answer_and_discovery": false,
+      "answer_correct": false,
+      "attribution_complete": false,
+      "case_id": "TA-M-015",
+      "complete_discovery": true,
+      "corpus_name": "tell-aster",
+      "opened_documents": [
+        "TA-ENV-06",
+        "TA-ARC-07",
+        "TA-ARC-05",
+        "TA-ENV-02",
+        "TA-EXC-02",
+        "TA-ENV-04"
+      ],
+      "required_documents": [
+        "TA-ENV-06",
+        "TA-ARC-07"
+      ],
+      "tags": [
+        "multi_doc",
+        "environment",
+        "spatial_analysis",
+        "interpretation"
+      ]
+    },
+    {
+      "answer_and_discovery": false,
+      "answer_correct": false,
+      "attribution_complete": false,
+      "case_id": "TA-M-025",
+      "complete_discovery": true,
+      "corpus_name": "tell-aster",
+      "opened_documents": [
+        "TA-ENV-07",
+        "TA-ART-01",
+        "TA-SUR-03",
+        "TA-ENV-02",
+        "TA-ENV-06",
+        "TA-ENV-04"
+      ],
+      "required_documents": [
+        "TA-ART-01",
+        "TA-ENV-07"
+      ],
+      "tags": [
+        "multi_doc",
+        "artifact_material",
+        "conservation"
+      ]
+    }
+  ],
+  "schema_version": 1
+}

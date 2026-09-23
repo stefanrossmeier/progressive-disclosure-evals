@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "experiment_name": "markdown-memory-system-agent-memory",
+  "backend": "agent-memory",
+  "top_k_documents": 6,
+  "provider_hit_limit": 24,
+  "answer_model": "gpt-5-nano",
+  "answer_prompt": "prompts/rag/system-v1.md",
+  "answer_prompt_sha256": "f103160732c9cae71f0fc964e9aa3a0154069a26573f202bdb6fd6ad744029d9",
+  "datasets": {
+    "northstar": "datasets/eval-v1.yaml",
+    "tell-aster": "datasets/tell-aster-eval-v2.yaml"
+  },
+  "memory_snapshots": {
+    "northstar": {
+      "path": "experiments/markdown-memory-systems/agent-memory/memory/northstar",
+      "sha256": "b5839cbed3424ff9e59ad5fb2b089b83764c2069c464ac5a15c7dfef85da6242"
+    },
+    "tell-aster": {
+      "path": "experiments/markdown-memory-systems/agent-memory/memory/tell-aster",
+      "sha256": "ba849c1b291628c816ec5897d62fb90fe838c2882e272ce748b6dcde77f0709b"
+    }
+  },
+  "ingest_markers": {
+    "northstar": {
+      "schema_version": 1,
+      "backend": "agent-memory",
+      "corpus": "northstar",
+      "memory_sha256": "b5839cbed3424ff9e59ad5fb2b089b83764c2069c464ac5a15c7dfef85da6242",
+      "provider_version": "70d85e5c22081d9dac88c5e908c88ea0bf13af88",
+      "ingest": {
+        "ok": true,
+        "backend": "agent-memory",
+        "provider_version": "70d85e5c22081d9dac88c5e908c88ea0bf13af88",
+        "documents": 40,
+        "elapsed_ms": 2611.677332984982,
+        "metadata": {
+          "mode": "native record + BM25 rebuild",
+          "source_of_truth": "agent-memory markdown store"
+        },
+        "harness_elapsed_seconds": 2.6826792920182925
+      },
+      "created_at": "2026-09-23T13:04:24.970938+00:00"
+    },
+    "tell-aster": {
+      "schema_version": 1,
+      "backend": "agent-memory",
+      "corpus": "tell-aster",
+      "memory_sha256": "ba849c1b291628c816ec5897d62fb90fe838c2882e272ce748b6dcde77f0709b",
+      "provider_version": "70d85e5c22081d9dac88c5e908c88ea0bf13af88",
+      "ingest": {
+        "ok": true,
+        "backend": "agent-memory",
+        "provider_version": "70d85e5c22081d9dac88c5e908c88ea0bf13af88",
+        "documents": 80,
+        "elapsed_ms": 5207.9781249922235,
+        "metadata": {
+          "mode": "native record + BM25 rebuild",
+          "source_of_truth": "agent-memory markdown store"
+        },
+        "harness_elapsed_seconds": 5.264206583000487
+      },
+      "created_at": "2026-09-23T13:04:30.237802+00:00"
+    }
+  },
+  "created_at": "2026-09-23T15:51:41.533226+00:00"
+}

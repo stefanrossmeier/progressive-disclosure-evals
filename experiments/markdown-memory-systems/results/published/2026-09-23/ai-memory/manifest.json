@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "experiment_name": "markdown-memory-system-ai-memory",
+  "backend": "ai-memory",
+  "top_k_documents": 6,
+  "provider_hit_limit": 24,
+  "answer_model": "gpt-5-nano",
+  "answer_prompt": "prompts/rag/system-v1.md",
+  "answer_prompt_sha256": "f103160732c9cae71f0fc964e9aa3a0154069a26573f202bdb6fd6ad744029d9",
+  "datasets": {
+    "northstar": "datasets/eval-v1.yaml",
+    "tell-aster": "datasets/tell-aster-eval-v2.yaml"
+  },
+  "memory_snapshots": {
+    "northstar": {
+      "path": "experiments/markdown-memory-systems/ai-memory/memory/northstar",
+      "sha256": "b5839cbed3424ff9e59ad5fb2b089b83764c2069c464ac5a15c7dfef85da6242"
+    },
+    "tell-aster": {
+      "path": "experiments/markdown-memory-systems/ai-memory/memory/tell-aster",
+      "sha256": "ba849c1b291628c816ec5897d62fb90fe838c2882e272ce748b6dcde77f0709b"
+    }
+  },
+  "ingest_markers": {
+    "northstar": {
+      "schema_version": 1,
+      "backend": "ai-memory",
+      "corpus": "northstar",
+      "memory_sha256": "b5839cbed3424ff9e59ad5fb2b089b83764c2069c464ac5a15c7dfef85da6242",
+      "provider_version": "ai-memory 2.4.0",
+      "ingest": {
+        "ok": true,
+        "backend": "ai-memory",
+        "provider_version": "ai-memory 2.4.0",
+        "documents": 40,
+        "elapsed_ms": 697.5492499768734,
+        "metadata": {
+          "mode": "write-page + corpus-local FTS5 API search",
+          "server_scope": "default/northstar",
+          "embedding_provider": "none",
+          "source_of_truth": "ai-memory git-backed markdown wiki"
+        },
+        "harness_elapsed_seconds": 0.8191945419821423
+      },
+      "created_at": "2026-09-23T15:33:34.490387+00:00"
+    },
+    "tell-aster": {
+      "schema_version": 1,
+      "backend": "ai-memory",
+      "corpus": "tell-aster",
+      "memory_sha256": "ba849c1b291628c816ec5897d62fb90fe838c2882e272ce748b6dcde77f0709b",
+      "provider_version": "ai-memory 2.4.0",
+      "ingest": {
+        "ok": true,
+        "backend": "ai-memory",
+        "provider_version": "ai-memory 2.4.0",
+        "documents": 80,
+        "elapsed_ms": 1447.13516702177,
+        "metadata": {
+          "mode": "write-page + corpus-local FTS5 API search",
+          "server_scope": "default/tell-aster",
+          "embedding_provider": "none",
+          "source_of_truth": "ai-memory git-backed markdown wiki"
+        },
+        "harness_elapsed_seconds": 1.5663948330038693
+      },
+      "created_at": "2026-09-23T15:33:36.060081+00:00"
+    }
+  },
+  "created_at": "2026-09-23T15:42:22.006570+00:00"
+}

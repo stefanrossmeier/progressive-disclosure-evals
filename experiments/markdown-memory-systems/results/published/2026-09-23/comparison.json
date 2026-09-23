@@ -1,0 +1,256 @@
+{
+  "backends": {
+    "agent-memory": {
+      "by_corpus": {
+        "northstar": {
+          "multi_doc": {
+            "answer_accuracy": 0.95,
+            "answer_and_discovery": 0.8,
+            "attribution": 0.65,
+            "complete_discovery": 0.8,
+            "completed": 20,
+            "errors": 0,
+            "mean_documents": 6.0,
+            "mean_input_tokens": 3472.2,
+            "mean_retrieval_ms": 74.20401054841932,
+            "mean_unresolved_provider_hits": 0.0,
+            "trials": 20
+          },
+          "overall": {
+            "answer_accuracy": 0.9833333333333333,
+            "answer_and_discovery": 0.9333333333333333,
+            "attribution": 0.8833333333333333,
+            "complete_discovery": 0.9333333333333333,
+            "completed": 60,
+            "errors": 0,
+            "mean_documents": 6.0,
+            "mean_input_tokens": 3407.2166666666667,
+            "mean_retrieval_ms": 74.11455841744707,
+            "mean_unresolved_provider_hits": 0.0,
+            "trials": 60
+          },
+          "single_doc": {
+            "answer_accuracy": 1.0,
+            "answer_and_discovery": 1.0,
+            "attribution": 1.0,
+            "complete_discovery": 1.0,
+            "completed": 40,
+            "errors": 0,
+            "mean_documents": 6.0,
+            "mean_input_tokens": 3374.725,
+            "mean_retrieval_ms": 74.06983235196094,
+            "mean_unresolved_provider_hits": 0.0,
+            "trials": 40
+          }
+        },
+        "tell-aster": {
+          "multi_doc": {
+            "answer_accuracy": 0.95,
+            "answer_and_discovery": 0.95,
+            "attribution": 0.95,
+            "complete_discovery": 1.0,
+            "completed": 40,
+            "errors": 0,
+            "mean_documents": 6.0,
+            "mean_input_tokens": 8516.85,
+            "mean_retrieval_ms": 75.70762192990514,
+            "mean_unresolved_provider_hits": 0.0,
+            "trials": 40
+          },
+          "overall": {
+            "answer_accuracy": 0.9833333333333333,
+            "answer_and_discovery": 0.9833333333333333,
+            "attribution": 0.9833333333333333,
+            "complete_discovery": 1.0,
+            "completed": 120,
+            "errors": 0,
+            "mean_documents": 6.0,
+            "mean_input_tokens": 8519.791666666666,
+            "mean_retrieval_ms": 75.49577049455063,
+            "mean_unresolved_provider_hits": 0.0,
+            "trials": 120
+          },
+          "single_doc": {
+            "answer_accuracy": 1.0,
+            "answer_and_discovery": 1.0,
+            "attribution": 1.0,
+            "complete_discovery": 1.0,
+            "completed": 80,
+            "errors": 0,
+            "mean_documents": 6.0,
+            "mean_input_tokens": 8521.2625,
+            "mean_retrieval_ms": 75.38984477687336,
+            "mean_unresolved_provider_hits": 0.0,
+            "trials": 80
+          }
+        }
+      },
+      "multi_doc": {
+        "answer_accuracy": 0.95,
+        "answer_and_discovery": 0.9,
+        "attribution": 0.85,
+        "complete_discovery": 0.9333333333333333,
+        "completed": 60,
+        "errors": 0,
+        "mean_documents": 6.0,
+        "mean_input_tokens": 6835.3,
+        "mean_retrieval_ms": 75.20641813607654,
+        "mean_unresolved_provider_hits": 0.0,
+        "trials": 60
+      },
+      "overall": {
+        "answer_accuracy": 0.9833333333333333,
+        "answer_and_discovery": 0.9666666666666667,
+        "attribution": 0.95,
+        "complete_discovery": 0.9777777777777777,
+        "completed": 180,
+        "errors": 0,
+        "mean_documents": 6.0,
+        "mean_input_tokens": 6815.6,
+        "mean_retrieval_ms": 75.03536646884943,
+        "mean_unresolved_provider_hits": 0.0,
+        "trials": 180
+      },
+      "single_doc": {
+        "answer_accuracy": 1.0,
+        "answer_and_discovery": 1.0,
+        "attribution": 1.0,
+        "complete_discovery": 1.0,
+        "completed": 120,
+        "errors": 0,
+        "mean_documents": 6.0,
+        "mean_input_tokens": 6805.75,
+        "mean_retrieval_ms": 74.94984063523589,
+        "mean_unresolved_provider_hits": 0.0,
+        "trials": 120
+      }
+    },
+    "ai-memory": {
+      "by_corpus": {
+        "northstar": {
+          "multi_doc": {
+            "answer_accuracy": 1.0,
+            "answer_and_discovery": 0.75,
+            "attribution": 0.6,
+            "complete_discovery": 0.75,
+            "completed": 20,
+            "errors": 0,
+            "mean_documents": 6.0,
+            "mean_input_tokens": 3430.55,
+            "mean_retrieval_ms": 15.21599159896141,
+            "mean_unresolved_provider_hits": 0.0,
+            "trials": 20
+          },
+          "overall": {
+            "answer_accuracy": 1.0,
+            "answer_and_discovery": 0.9166666666666666,
+            "attribution": 0.8666666666666667,
+            "complete_discovery": 0.9166666666666666,
+            "completed": 60,
+            "errors": 0,
+            "mean_documents": 6.0,
+            "mean_input_tokens": 3385.4,
+            "mean_retrieval_ms": 15.281230465916451,
+            "mean_unresolved_provider_hits": 0.0,
+            "trials": 60
+          },
+          "single_doc": {
+            "answer_accuracy": 1.0,
+            "answer_and_discovery": 1.0,
+            "attribution": 1.0,
+            "complete_discovery": 1.0,
+            "completed": 40,
+            "errors": 0,
+            "mean_documents": 6.0,
+            "mean_input_tokens": 3362.825,
+            "mean_retrieval_ms": 15.313849899393972,
+            "mean_unresolved_provider_hits": 0.0,
+            "trials": 40
+          }
+        },
+        "tell-aster": {
+          "multi_doc": {
+            "answer_accuracy": 0.95,
+            "answer_and_discovery": 0.95,
+            "attribution": 0.925,
+            "complete_discovery": 1.0,
+            "completed": 40,
+            "errors": 0,
+            "mean_documents": 6.0,
+            "mean_input_tokens": 8390.925,
+            "mean_retrieval_ms": 17.487986475316575,
+            "mean_unresolved_provider_hits": 0.0,
+            "trials": 40
+          },
+          "overall": {
+            "answer_accuracy": 0.9833333333333333,
+            "answer_and_discovery": 0.9833333333333333,
+            "attribution": 0.975,
+            "complete_discovery": 1.0,
+            "completed": 120,
+            "errors": 0,
+            "mean_documents": 6.0,
+            "mean_input_tokens": 8535.183333333332,
+            "mean_retrieval_ms": 16.962543434055988,
+            "mean_unresolved_provider_hits": 0.0,
+            "trials": 120
+          },
+          "single_doc": {
+            "answer_accuracy": 1.0,
+            "answer_and_discovery": 1.0,
+            "attribution": 1.0,
+            "complete_discovery": 1.0,
+            "completed": 80,
+            "errors": 0,
+            "mean_documents": 6.0,
+            "mean_input_tokens": 8607.3125,
+            "mean_retrieval_ms": 16.699821913425694,
+            "mean_unresolved_provider_hits": 0.0,
+            "trials": 80
+          }
+        }
+      },
+      "multi_doc": {
+        "answer_accuracy": 0.9666666666666667,
+        "answer_and_discovery": 0.8833333333333333,
+        "attribution": 0.8166666666666667,
+        "complete_discovery": 0.9166666666666666,
+        "completed": 60,
+        "errors": 0,
+        "mean_documents": 6.0,
+        "mean_input_tokens": 6737.466666666666,
+        "mean_retrieval_ms": 16.73065484986485,
+        "mean_unresolved_provider_hits": 0.0,
+        "trials": 60
+      },
+      "overall": {
+        "answer_accuracy": 0.9888888888888889,
+        "answer_and_discovery": 0.9611111111111111,
+        "attribution": 0.9388888888888889,
+        "complete_discovery": 0.9722222222222222,
+        "completed": 180,
+        "errors": 0,
+        "mean_documents": 6.0,
+        "mean_input_tokens": 6818.5888888888885,
+        "mean_retrieval_ms": 16.402105778009474,
+        "mean_unresolved_provider_hits": 0.0,
+        "trials": 180
+      },
+      "single_doc": {
+        "answer_accuracy": 1.0,
+        "answer_and_discovery": 1.0,
+        "attribution": 1.0,
+        "complete_discovery": 1.0,
+        "completed": 120,
+        "errors": 0,
+        "mean_documents": 6.0,
+        "mean_input_tokens": 6859.15,
+        "mean_retrieval_ms": 16.237831242081786,
+        "mean_unresolved_provider_hits": 0.0,
+        "trials": 120
+      }
+    }
+  },
+  "note": "Final valid full-run aggregates. EverOS excluded from the full comparison; see README.md and docs/markdown-memory-systems-evaluation-2026-09-23.md.",
+  "schema_version": 1
+}
